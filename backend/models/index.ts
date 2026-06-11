@@ -1,6 +1,7 @@
 // backend/models/index.js
-const { Sequelize } = require('sequelize');
-const config = require('../config/database');
+
+import { Sequelize } from 'sequelize';
+import config from '../config/database';
 
 const env = process.env.NODE_ENV || 'development';
 const dbConfig = config[env];

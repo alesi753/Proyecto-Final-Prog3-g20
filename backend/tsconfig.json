@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "types": ["node"],
+    "noImplicitOverride": true // Config Agregado para permitir el uso de 'override' en métodos que sobrescriben métodos de la clase padre
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
+}
