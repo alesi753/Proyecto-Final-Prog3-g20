@@ -19,6 +19,9 @@ lerna-debug.log*
 .env.test.local
 .env.production.local
 
+# npm configuration
+.npmrc
+
 # Runtime data
 pids
 *.pid
