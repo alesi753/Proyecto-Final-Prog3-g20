@@ -1,15 +1,13 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": false,
-    "outDir": "./dist",
-    "rootDir": "./",
+    "target": "ES2022" /* Versión de JS de salida */,
+    "module": "CommonJS" /* 🔴 CLAVE: Fuerza a traducir los import/export a require */,
+    "moduleResolution": "node" /* Cómo busca los archivos Node */,
+    "ignoreDeprecations": "6.0",
+    "esModuleInterop": true /* Permite compatibilidad total entre require e import */,
     "types": ["node"],
-    "noImplicitOverride": true // Config Agregado para permitir el uso de 'override' en métodos que sobrescriben métodos de la clase padre
-  },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules"]
+    "forceConsistentCasingInFileNames": true /* Respeta mayúsculas y minúsculas */,
+    "strict": true /* Habilita el tipado estricto de TS */,
+    "skipLibCheck": true /* Omite la comprobación de tipos de las librerías */
+  }
 }

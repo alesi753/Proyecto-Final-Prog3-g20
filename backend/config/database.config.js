@@ -1,5 +1,10 @@
-// config/config.js
 require('dotenv').config();
+
+const esNube = 
+  process.env.PGHOST &&
+  process.env.PGHOST  !== 'localhost'&&
+  process.env.PGHOST  !== 'database'
+  
 
 module.exports = {
   development: {
@@ -17,6 +22,17 @@ module.exports = {
       idle: 10000
     }
   },
+  dialectOptions: esNube 
+  ? {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    }
+  : {}
+};
+
+
   // test: {
   //   username: process.env.DB_USER || 'app_user',
   //   password: process.env.DB_PASSWORD || 'app_password',
@@ -40,11 +56,4 @@ module.exports = {
   //     acquire: 30000,
   //     idle: 10000
   //   },
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false
-      }
-    }
   // }
-};
