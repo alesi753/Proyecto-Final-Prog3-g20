@@ -36,7 +36,4 @@ const verificarConexion = async (): Promise<void> => {
 
 verificarConexion()
 
-module.exports = {
-  sequelize,
-  Sequelize
-}
+export { sequelize, Sequelize };
