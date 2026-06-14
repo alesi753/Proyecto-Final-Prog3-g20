@@ -3,60 +3,54 @@ const cors = require('cors')
 require('dotenv').config()
 const errorHandler = require('../middleware/error-handler.middleware')
 const { sequelize } = require('../models/index.model')
-// const { establecerCardinalidad } = require('../models/cardinalidades.model')
 
 class Server {
   constructor() {
     this.app = express()
-    this.port = process.env.PORT || 3000
+    // Puerto 3001 asignado por defecto para aislar la ejecución de React
+    this.port = process.env.PORT || 3001
     this.connectToDataBase()
     this.middleware()
     this.rutas()
     this.errorHandlerGlobal()
   }
 
-  // Configurar middleware
   middleware() {
     this.app.use(cors())
     this.app.use(express.json())
   }
 
-  // Definir rutas
   rutas() {
-    // this.app.use('/alumnos', require('../routes/alumno.routes'))
-    
+    // Montaje del cableado lógico. Se exponen los controladores a la red.
+    this.app.use('/api/auth', require('../routes/auth.js'))
+    this.app.use('/api/categorias', require('../routes/categoria.routes.js'))
+    this.app.use('/api/productos', require('../routes/producto.routes.js'))
+    this.app.use('/api/carrito', require('../routes/carrito.routes.js'))
+    this.app.use('/api/ordenes', require('../routes/orden.routes.js'))
   }
 
-  // Conectar a la base de datos y sincronizar modelos
   async connectToDataBase() {
     try {
-      // establecerCardinalidad()
-      console.log(
-        'Cardinalidad y relaciones entre trablas establecidas correctamente'
-      )
-
       await sequelize.sync({ alter: false })
-      console.log('Database sincronizada correctamente')
+      console.log('Conexión física a PostgreSQL establecida. Modelos sincronizados.')
     } catch (error) {
-      console.error('Error en la conexión a la DB: ', error)
+      console.error('Crash fatal en la conexión a la base de datos: ', error)
     }
   }
 
-  // Manejo global de errores
   errorHandlerGlobal() {
-    // Middleware para manejar rutas no encontradas (404)
-    this.app.use((err, req, res, next) => {
-      console.error(err.stack)
-      return res.status(404).json({ msg: 'Error. Pagina no encontrada' })
+    // Filtro 404 estricto (Debe tener 3 parámetros exactos)
+    this.app.use((req, res, next) => {
+      return res.status(404).json({ msg: 'Interrupción: Endpoint no encontrado (404).' })
     })
-    // Middleware para manejar errores generales
+    
+    // Filtro de excepciones globales del procesador (Debe tener 4 parámetros)
     this.app.use(errorHandler)
   }
 
-  // Iniciar el servidor
   listen() {
     this.app.listen(this.port, () => {
-      console.log(`La API esta escuchando el el puerto: ${this.port}`)
+      console.log(`Clúster Backend operando estable en el puerto: ${this.port}`)
     })
   }
 }
