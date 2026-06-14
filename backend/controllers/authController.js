@@ -1,79 +1,84 @@
+const jwt = require('jsonwebtoken');
 const { User } = require('../models');
-const { generarToken } = require('../middleware/auth');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'secret_por_defecto';
 
 const register = async (req, res) => {
   try {
-    const { nombre, email, password } = req.body;
+    
+    const { nombre, apellido, correo, password } = req.body;
 
-    // Verificar que no exista un usuario con ese email
-    const existente = await User.findOne({ where: { email } });
+    const existente = await User.findOne({ where: { correo } });
     if (existente) {
-      return res.status(400).json({ error: 'El email ya está registrado' });
+      return res.status(409).json({ error: 'Excepción de redundancia: El correo ya está registrado' });
     }
 
-    // TODO: Crear el usuario en la base de datos usando User.create()
-    // Pista: pasar { nombre, email, password }
-    const user = null; // <-- reemplazar esta línea
+    
+    const user = await User.create({ 
+      nombre, 
+      apellido, 
+      correo, 
+      password,
+      rol: 'cliente' 
+    });
 
-    // TODO: Generar un token para el usuario recién creado usando generarToken()
-    const token = null; // <-- reemplazar esta línea
+    const token = jwt.sign({ id: user.id, rol: user.rol }, JWT_SECRET, { expiresIn: '24h' });
 
-    res.status(201).json({
-      message: 'Usuario registrado exitosamente',
-      user,
+   
+    return res.status(201).json({
+      message: 'Usuario instanciado exitosamente',
+      user: { id: user.id, nombre: user.nombre, correo: user.correo, rol: user.rol },
       token
     });
   } catch (error) {
-    console.error('Error en register:', error);
-    res.status(500).json({ error: 'Error al registrar usuario' });
+    console.error('Crash en register:', error);
+    return res.status(500).json({ error: 'Fallo de escritura en el servidor' });
   }
 };
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { correo, password } = req.body;
 
-    // TODO: Buscar el usuario por email usando User.findOne()
-    const user = null; // <-- reemplazar esta línea
-
+    const user = await User.findOne({ where: { correo } });
     if (!user) {
-      return res.status(401).json({ error: 'Credenciales inválidas' });
+      return res.status(401).json({ error: 'Acceso denegado: Credenciales inválidas' });
     }
 
-    // TODO: Validar la contraseña usando el método user.validarPassword()
-    const passwordValida = false; // <-- reemplazar esta línea
-
+    
+    const passwordValida = await user.validarPassword(password);
     if (!passwordValida) {
-      return res.status(401).json({ error: 'Credenciales inválidas' });
+      return res.status(401).json({ error: 'Acceso denegado: Credenciales inválidas' });
     }
 
-    const token = generarToken(user);
+    const token = jwt.sign({ id: user.id, rol: user.rol }, JWT_SECRET, { expiresIn: '24h' });
 
-    res.json({
-      message: 'Login exitoso',
-      user,
+    return res.status(200).json({
+      message: 'Handshake exitoso',
+      user: { id: user.id, nombre: user.nombre, correo: user.correo, rol: user.rol },
       token
     });
   } catch (error) {
-    console.error('Error en login:', error);
-    res.status(500).json({ error: 'Error al iniciar sesión' });
+    console.error('Crash en login:', error);
+    return res.status(500).json({ error: 'Fallo de procesamiento lógico' });
   }
 };
 
 const perfil = async (req, res) => {
   try {
-    // TODO: Obtener el usuario desde la base de datos usando el id de req.user
-    // Pista: req.user fue seteado por el middleware verificarToken
-    const user = null; // <-- reemplazar esta línea
+    
+    const user = await User.findByPk(req.user.id, {
+      attributes: ['id', 'nombre', 'apellido', 'correo', 'rol'] // Select selectivo, excluye la password
+    });
 
     if (!user) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
+      return res.status(404).json({ error: 'Puntero nulo: Usuario no encontrado' });
     }
 
-    res.json({ user });
+    return res.status(200).json({ user });
   } catch (error) {
-    console.error('Error en perfil:', error);
-    res.status(500).json({ error: 'Error al obtener perfil' });
+    console.error('Crash en perfil:', error);
+    return res.status(500).json({ error: 'Fallo de lectura en la base de datos' });
   }
 };
 
