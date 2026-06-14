@@ -25,6 +25,8 @@ class Server {
     this.app.use('/api/auth', require('../routes/auth.js'))
     this.app.use('/api/categorias', require('../routes/categoria.routes.js'))
     this.app.use('/api/productos', require('../routes/producto.routes.js'))
+    this.app.use('/api/carrito', require('../routes/carrito.routes.js'))
+    this.app.use('/api/ordenes', require('../routes/orden.routes.js'))
   }
 
   async connectToDataBase() {
