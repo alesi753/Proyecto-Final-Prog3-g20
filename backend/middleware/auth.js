@@ -1,32 +1,38 @@
 const jwt = require('jsonwebtoken');
+
 const JWT_SECRET = process.env.JWT_SECRET || 'secret_por_defecto';
+
+function generarToken(user) {
+
+  // Usamos el payload { id: user.id, correo: user.correo } para coincidir con el DER.
+  return jwt.sign({ id: user.id, correo: user.correo }, JWT_SECRET, { expiresIn: '24h' });
+}
 
 function verificarToken(req, res, next) {
   const authHeader = req.headers['authorization'];
 
   if (!authHeader) {
-    return res.status(401).json({ error: 'Interrupción: Token no proporcionado en el Header' });
+    return res.status(401).json({ error: 'Token no proporcionado' });
   }
 
-  // Extrae el token asumiendo el formato "Bearer <token>"
-  const token = authHeader.split(' ')[1];
+  
+  // El formato es "Bearer <token>". Dividimos por el espacio y tomamos la posición [1].
+  const token = authHeader.split(' ')[1]; 
 
   if (!token) {
-    return res.status(401).json({ error: 'Interrupción: Formato de token inválido' });
+    return res.status(401).json({ error: 'Formato de token inválido' });
   }
 
   try {
-    // Decodifica y valida la firma criptográfica
-    const decoded = jwt.verify(token, JWT_SECRET);
     
-    // Inyecta el payload (id, rol) en el objeto request para que lo consuma el controlador
-    req.user = decoded;
+    const payload = jwt.verify(token, JWT_SECRET);
     
-    // Libera el paquete para que continúe hacia el controlador
+    // Si es válido, guardamos los datos del usuario en req.user y llamamos a next()
+    req.user = payload;
     next();
   } catch (error) {
-    return res.status(401).json({ error: 'Interrupción: Certificado inválido o expirado' });
+    return res.status(401).json({ error: 'Token inválido o expirado' });
   }
 }
 
-module.exports = { verificarToken };
+module.exports = { generarToken, verificarToken };
