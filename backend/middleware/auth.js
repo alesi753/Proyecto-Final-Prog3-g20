@@ -1,35 +1,32 @@
 const jwt = require('jsonwebtoken');
-
 const JWT_SECRET = process.env.JWT_SECRET || 'secret_por_defecto';
-
-function generarToken(user) {
-  // TODO: Generar un token JWT con el id y email del usuario.
-  // Pista: usar jwt.sign() con un payload { id, email } y una expiración de '24h'.
-}
 
 function verificarToken(req, res, next) {
   const authHeader = req.headers['authorization'];
 
   if (!authHeader) {
-    return res.status(401).json({ error: 'Token no proporcionado' });
+    return res.status(401).json({ error: 'Interrupción: Token no proporcionado en el Header' });
   }
 
-  // TODO: Extraer el token del header Authorization.
-  // El formato es "Bearer <token>", hay que quedarse solo con la parte del token.
-  // Pista: usar split(' ')
-  const token = null; // <-- reemplazar esta línea
+  // Extrae el token asumiendo el formato "Bearer <token>"
+  const token = authHeader.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ error: 'Formato de token inválido' });
+    return res.status(401).json({ error: 'Interrupción: Formato de token inválido' });
   }
 
   try {
-    // TODO: Verificar y decodificar el token con jwt.verify()
-    // Si es válido, guardar los datos del usuario en req.user y llamar a next()
-    // Si es inválido, devolver status 401 con un mensaje de error
+    // Decodifica y valida la firma criptográfica
+    const decoded = jwt.verify(token, JWT_SECRET);
+    
+    // Inyecta el payload (id, rol) en el objeto request para que lo consuma el controlador
+    req.user = decoded;
+    
+    // Libera el paquete para que continúe hacia el controlador
+    next();
   } catch (error) {
-    return res.status(401).json({ error: 'Token inválido o expirado' });
+    return res.status(401).json({ error: 'Interrupción: Certificado inválido o expirado' });
   }
 }
 
-module.exports = { generarToken, verificarToken };
+module.exports = { verificarToken };
