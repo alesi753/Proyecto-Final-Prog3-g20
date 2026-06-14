@@ -4,6 +4,8 @@ require('dotenv').config()
 const errorHandler = require('../middleware/error-handler.middleware')
 const { sequelize } = require('../models/index.model')
 
+import { configurarCardinalidades } from './models/cardinalidades';
+
 class Server {
   constructor() {
     this.app = express()
@@ -31,6 +33,10 @@ class Server {
 
   async connectToDataBase() {
     try {
+
+      // Ejecutar las relaciones ANTES del sync
+      configurarCardinalidades();
+
       await sequelize.sync({ alter: false })
       console.log('Conexión física a PostgreSQL establecida. Modelos sincronizados.')
     } catch (error) {
