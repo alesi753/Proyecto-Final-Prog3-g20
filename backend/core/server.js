@@ -4,6 +4,7 @@ require('dotenv').config()
 const errorHandler = require('../middleware/error-handler.middleware')
 const { sequelize } = require('../models/index.model')
 
+
 import { configurarCardinalidades } from './models/cardinalidades';
 
 class Server {

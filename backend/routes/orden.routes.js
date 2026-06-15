@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { procesarCheckout, obtenerHistorialOrdenes } = require('../controllers/orden.controller');
-const { verificarToken } = require('../middleware/auth');
+const { verificarToken } = require('../middleware/auth.middleware');
 
 const router = Router();
 

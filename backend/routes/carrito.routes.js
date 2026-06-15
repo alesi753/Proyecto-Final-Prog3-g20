@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { obtenerCarrito, agregarItem, eliminarItem } = require('../controllers/carrito.controller');
-const { verificarToken } = require('../middleware/auth');
+const { verificarToken } = require('../middleware/auth.middleware');
 
 const router = Router();
 
