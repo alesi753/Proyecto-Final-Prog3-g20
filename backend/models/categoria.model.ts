@@ -13,6 +13,7 @@ export class CategoriaModel
 {
     declare id: number;
     declare nombre: string;
+    declare padreId: number | null; // null significa que es una categoría principal
     declare readonly createdAt: Date;
     declare readonly updatedAt: Date;
 
@@ -51,6 +52,11 @@ CategoriaModel.init(
             type: DataTypes.STRING(100),
             allowNull: false, 
             unique: true
+        },
+        padreId: {
+            type: DataTypes.INTEGER,
+            allowNull: true, // permitir categorías principales
+            onDelete: 'SET NULL', // Si se borra la categoría padre, las subcategorías quedan como principales
         }
     },
     {
