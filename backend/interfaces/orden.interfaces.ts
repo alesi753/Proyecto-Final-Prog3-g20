@@ -1,11 +1,13 @@
 
-// Extraemos el ENUM a un tipo para poder reutilizarlo
-export type EstadoOrden = 'pendiente' | 'pagado' | 'enviado' | 'cancelado';
+// 'estado' goes through a closed cycle: pendiente → pagado → preparando → enviado → entregado
+//                                                                                 ↘ cancelado
+export type EstadoOrden = 'pendiente' | 'pagado' | 'preparando' | 'enviado' | 'entregado' | 'cancelado';
+
 
 export interface InterfaceOrden {
   id: number;
   usuarioId: number;
   precioTotal: number;
   estado: EstadoOrden;
-  fechaCreacion: Date; 
+  fechaCreacion: Date;
 }
