@@ -29,8 +29,13 @@ export class UsuarioModel
         return await UsuarioModel.findAll()
     }
     
-    static async findById(id: number): Promise<UsuarioModel | null> {
+    static async findUserById(id: number): Promise<UsuarioModel | null> {
         return await UsuarioModel.findByPk(id)
+    }
+
+    // Buscar usuario por correo electrónico, método util para login y validaciones de unicidad
+    static async findUserByEmail(correo: string): Promise<UsuarioModel | null> {
+        return await UsuarioModel.findOne({ where: { correo } });
     }
 
     static async createUser(usuarioInput: InputUsuario): Promise<UsuarioModel> {
@@ -38,7 +43,7 @@ export class UsuarioModel
     }
 
     static async updateUser(id: number, updateData: Partial<InputUsuario>): Promise<UsuarioModel | null> {
-        const usuario = await UsuarioModel.findByPk(id);
+        const usuario = await UsuarioModel.findUserById(id);
         if (!usuario) return null;
         return await usuario.update(updateData);
     }
@@ -50,24 +55,32 @@ export class UsuarioModel
 }
 
 UsuarioModel.init(
-  {
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    nombre: { type: DataTypes.STRING(255), allowNull: false },
-    apellido: { type: DataTypes.STRING(255), allowNull: false },
-    correo: { type: DataTypes.STRING(255), allowNull: false, unique: true },
-    password: { type: DataTypes.TEXT, allowNull: false },
-    rol: { type: DataTypes.ENUM('cliente', 'admin'), allowNull: false }
-  },
-  {
-    sequelize,
-    tableName: 'usuarios', 
-    timestamps: true,
-    hooks: {
-        // Hook de seguridad 
-        beforeCreate: async (usuario: UsuarioModel) => {
-            const salt = await bcrypt.genSalt(10);
-            usuario.password = await bcrypt.hash(usuario.password, salt);
+    {
+        id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+        nombre: { type: DataTypes.STRING(255), allowNull: false },
+        apellido: { type: DataTypes.STRING(255), allowNull: false },
+        correo: { type: DataTypes.STRING(255), allowNull: false, unique: true },
+        password: { type: DataTypes.TEXT, allowNull: false },
+        rol: { type: DataTypes.ENUM('cliente', 'admin'), allowNull: false }
+    },
+    {
+        sequelize,
+        tableName: 'usuarios', 
+        timestamps: true,
+        hooks: {
+            // Hook de seguridad - CREACIÓN
+            beforeCreate: async (usuario: UsuarioModel) => {
+                const salt = await bcrypt.genSalt(10);
+                usuario.password = await bcrypt.hash(usuario.password, salt);
+            },
+            // Hook de seguridad - ACTUALIZACIÓN
+            beforeUpdate: async (usuario: UsuarioModel) => {
+                // Solo hashear de nuevo si el campo password fue modificado
+                if (usuario.changed('password')) {
+                    const salt = await bcrypt.genSalt(10);
+                    usuario.password = await bcrypt.hash(usuario.password, salt);
+                }
+            }
         }
     }
-  }
 )
