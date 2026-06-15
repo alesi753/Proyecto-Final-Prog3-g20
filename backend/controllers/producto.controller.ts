@@ -53,21 +53,7 @@ export class ProductoController {
     }
   }
 
-  static async disableProduct(req: Request, res: Response): Promise<void> {
-    try {
-      const id = parseInt(req.params.id as string, 10);
-      const deshabilitado = await ProductoModel.disableProduct(id);
-      if (!deshabilitado) {
-        res.status(404).json({ message: 'El producto que intentas deshabilitar no existe o ya está deshabilitado' });
-        return;
-      }
-      res.json(deshabilitado);
-    } catch (error) {
-      console.error('Error al deshabilitar el producto:', error);
-      res.status(500).json({ message: 'Error interno al deshabilitar el producto' });
-    }
-  }
-
+  
   static async deleteProduct(req: Request, res: Response): Promise<void> {
     try {
       const id = parseInt(req.params.id as string, 10);

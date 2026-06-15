@@ -16,6 +16,7 @@ export class OrdenModel
   declare precioTotal: number;
   declare estado: EstadoOrden;
   declare readonly fechaCreacion: Date;
+  
   static async findAllOrders(): Promise<OrdenModel[]> {
     return await OrdenModel.findAll();
   }
