@@ -6,71 +6,71 @@ import { InterfaceOrden, EstadoOrden } from '../interfaces/orden.interfaces';
 // Omitimos 'id' y 'fechaCreacion', y el atributo 'estado' se vuelve opcional (podemos omitirlo al crear una orden, y se asumirá que es 'pendiente' por defecto)
 type InputOrder = Omit<InterfaceOrden, 'id' | 'estado' | 'fechaCreacion'> & { estado?: EstadoOrden };
 
-interface OrderCreationAttributes extends Optional<InterfaceOrden, 'id' | 'estado' | 'fechaCreacion'> {}
+interface OrderCreationAttributes extends Optional<InterfaceOrden, 'id' | 'estado' | 'fechaCreacion'> { }
 
 export class OrdenModel
-    extends Model<InterfaceOrden, OrderCreationAttributes> 
-    implements InterfaceOrden 
-{
-    declare id: number;
-    declare usuarioId: number;
-    declare precioTotal: number;
-    declare estado: EstadoOrden;
-    declare readonly fechaCreacion: Date;
-    static async findAllOrders(): Promise<OrdenModel[]> {
-        return await OrdenModel.findAll();
-    }
-    
-    static async findOrderById(id: number): Promise<OrdenModel | null> {
-        return await OrdenModel.findByPk(id);
-    }
+  extends Model<InterfaceOrden, OrderCreationAttributes>
+  implements InterfaceOrden {
+  declare id: number;
+  declare usuarioId: number;
+  declare precioTotal: number;
+  declare estado: EstadoOrden;
+  declare readonly fechaCreacion: Date;
+  static async findAllOrders(): Promise<OrdenModel[]> {
+    return await OrdenModel.findAll();
+  }
 
-    static async createOrder(orderInput: InputOrder): Promise<OrdenModel> {
-        return await OrdenModel.create(orderInput);
-    }
+  static async findOrderById(id: number): Promise<OrdenModel | null> {
+    return await OrdenModel.findByPk(id);
+  }
 
-    static async updateOrder(id: number, updateData: Partial<InputOrder>): Promise<OrdenModel | null> {
-        const order = await OrdenModel.findByPk(id);
-        if (!order) return null;
-        return await order.update(updateData);
-    }
+  static async createOrder(orderInput: InputOrder): Promise<OrdenModel> {
+    return await OrdenModel.create(orderInput);
+  }
 
-    static async deleteOrder(id: number): Promise<boolean> {
-        const deletedRows = await OrdenModel.destroy({ where: { id } });
-        return deletedRows > 0;
-    }
+  static async updateOrder(id: number, updateData: Partial<InputOrder>): Promise<OrdenModel | null> {
+    const order = await OrdenModel.findByPk(id);
+    if (!order) return null;
+    return await order.update(updateData);
+  }
+
+  static async deleteOrder(id: number): Promise<boolean> {
+    const deletedRows = await OrdenModel.destroy({ where: { id } });
+    return deletedRows > 0;
+  }
 }
 
 OrdenModel.init(
-    {
-        id: { 
-            type: DataTypes.INTEGER, 
-            primaryKey: true, 
-            autoIncrement: true 
-        },
-        usuarioId: { 
-            type: DataTypes.INTEGER, 
-            allowNull: false
-        },
-        precioTotal: { 
-            type: DataTypes.DECIMAL(10, 2), // NUMERIC(10,2) en PostgreSQL
-            allowNull: false 
-        },
-        estado: { 
-            type: DataTypes.ENUM('pendiente', 'pagado', 'enviado', 'cancelado'), 
-            allowNull: false, 
-            defaultValue: 'pendiente'
-        },
-        fechaCreacion: { 
-            type: DataTypes.DATE,
-            allowNull: true
-        }
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
     },
-    {
-        sequelize,
-        tableName: 'ordenes', 
-        timestamps: true,             
-        updatedAt: false, // Desactivamos updatedAt
-        createdAt: 'fechaCreacion' // Usamos la columna fechaCreacion en vez de createdAt
+    usuarioId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: { model: 'usuarios', key: 'id' }
+    },
+    precioTotal: {
+      type: DataTypes.DECIMAL(10, 2), // NUMERIC(10,2) en PostgreSQL
+      allowNull: false
+    },
+    estado: {
+      type: DataTypes.ENUM('pendiente', 'pagado', 'preparando', 'enviado', 'entregado', 'cancelado'),
+      allowNull: false,
+      defaultValue: 'pendiente'
+    },
+    fechaCreacion: {
+      type: DataTypes.DATE,
+      allowNull: false
     }
+  },
+  {
+    sequelize,
+    tableName: 'ordenes',
+    timestamps: true,
+    updatedAt: false, // Desactivamos updatedAt
+    createdAt: 'fechaCreacion' // Usamos la columna fechaCreacion en vez de createdAt
+  }
 );
