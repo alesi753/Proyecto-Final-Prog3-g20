@@ -5,48 +5,57 @@ import { CategoriaModel } from './categoria.model';
 import { ProductoModel } from './producto.model';
 import { OrderItemModel } from './orden-item.model';
 import { CarritoItemModel } from './carrito-item.model';
+import { MarcaModel } from './marca.model';
 
 export const configurarCardinalidades = () => {
-    
-    // USUARIO Y CARRITO (1 a 1)
-    // Un usuario tiene un solo carrito. Un carrito pertenece a un solo usuario.
-    UsuarioModel.hasOne(CarritoModel, { foreignKey: 'usuarioId' });
-    CarritoModel.belongsTo(UsuarioModel, { foreignKey: 'usuarioId' });
 
-    // USUARIO Y ÓRDENES (1 a N)
-    // Un usuario puede tener muchas órdenes. Una orden es de un solo usuario.
-    UsuarioModel.hasMany(OrdenModel, { foreignKey: 'usuarioId' });
-    OrdenModel.belongsTo(UsuarioModel, { foreignKey: 'usuarioId' });
+  // # RELACIONES 1:1
+  // USUARIO → CARRITO (1:1)
+  // Un usuario tiene un solo carrito. Un carrito pertenece a un solo usuario.
+  UsuarioModel.hasOne(CarritoModel, { foreignKey: 'usuarioId' });
+  CarritoModel.belongsTo(UsuarioModel, { foreignKey: 'usuarioId' });
 
-    // CATEGORÍA Y PRODUCTOS (1 a N)
-    // Una categoría tiene muchos productos. Un producto pertenece a una sola categoría.
-    CategoriaModel.hasMany(ProductoModel, { foreignKey: 'categoriaId' });
-    ProductoModel.belongsTo(CategoriaModel, { foreignKey: 'categoriaId' });
+  // # RELACIONES 1:N
+  // USUARIO → ÓRDENES (1:N)
+  // Un usuario puede tener muchas órdenes. Una orden es de un solo usuario.
+  UsuarioModel.hasMany(OrdenModel, { foreignKey: 'usuarioId' });
+  OrdenModel.belongsTo(UsuarioModel, { foreignKey: 'usuarioId' });
 
-    // RELACION N:M (MUCHOS A MUCHOS) CON SUS TABLAS INTERMEDIA
+  // MARCA → PRODUCTOS (1:N)
+  // Una Marca tiene muchos productos. Un producto pertenece a una sola marca.
+  MarcaModel.hasMany(ProductoModel, { foreignKey: 'marcaId' });
+  ProductoModel.belongsTo(MarcaModel, { foreignKey: 'marcaId' });
 
-    // ÓRDENES ↔ PRODUCTOS (N : M)
-    // Relación principal Muchos a Muchos
-    OrdenModel.belongsToMany(ProductoModel, { through: OrderItemModel, foreignKey: 'ordenId' });
-    ProductoModel.belongsToMany(OrdenModel, { through: OrderItemModel, foreignKey: 'productoId' });
+  // CATEGORÍA → PRODUCTOS (1:N)
+  // Una categoría tiene muchos productos. Un producto pertenece a una sola categoría.
+  CategoriaModel.hasMany(ProductoModel, { foreignKey: 'categoriaId' });
+  ProductoModel.belongsTo(CategoriaModel, { foreignKey: 'categoriaId' });
 
+  // CATEGORÍA → CATEGORÍA (1:N)
+  CategoriaModel.hasMany(CategoriaModel, { foreignKey: 'padreId', as: 'subcategorias' });
+  CategoriaModel.belongsTo(CategoriaModel, { foreignKey: 'padreId', as: 'padre' });
 
-    // Las relaciones 1 a N subyacentes con la tabla intermedia
-    OrdenModel.hasMany(OrderItemModel, { foreignKey: 'ordenId' });
-    OrderItemModel.belongsTo(OrdenModel, { foreignKey: 'ordenId' });
-    ProductoModel.hasMany(OrderItemModel, { foreignKey: 'productoId' });
-    OrderItemModel.belongsTo(ProductoModel, { foreignKey: 'productoId' });
+  // # RELACIONES N:M
+  // ÓRDENES ↔ PRODUCTOS (N:M)
+  OrdenModel.belongsToMany(ProductoModel, { through: OrderItemModel, foreignKey: 'ordenId' });
+  ProductoModel.belongsToMany(OrdenModel, { through: OrderItemModel, foreignKey: 'productoId' });
 
-    // CARRITOS ↔ PRODUCTOS (N : M)
-    // Relación principal Muchos a Muchos
-    CarritoModel.belongsToMany(ProductoModel, { through: CarritoItemModel, foreignKey: 'carritoId' });
-    ProductoModel.belongsToMany(CarritoModel, { through: CarritoItemModel, foreignKey: 'productoId' });
+  // Las relaciones 1 a N subyacentes con la tabla intermedia
+  OrdenModel.hasMany(OrderItemModel, { foreignKey: 'ordenId' });
+  OrderItemModel.belongsTo(OrdenModel, { foreignKey: 'ordenId' });
+  ProductoModel.hasMany(OrderItemModel, { foreignKey: 'productoId' });
+  OrderItemModel.belongsTo(ProductoModel, { foreignKey: 'productoId' });
 
-    // Las relaciones 1 a N subyacentes con la tabla intermedia
-    CarritoModel.hasMany(CarritoItemModel, { foreignKey: 'carritoId' });
-    CarritoItemModel.belongsTo(CarritoModel, { foreignKey: 'carritoId' });
-    ProductoModel.hasMany(CarritoItemModel, { foreignKey: 'productoId' });
-    CarritoItemModel.belongsTo(ProductoModel, { foreignKey: 'productoId' });
+  // CARRITOS ↔ PRODUCTOS (N : M)
+  // Relación principal Muchos a Muchos
+  CarritoModel.belongsToMany(ProductoModel, { through: CarritoItemModel, foreignKey: 'carritoId' });
+  ProductoModel.belongsToMany(CarritoModel, { through: CarritoItemModel, foreignKey: 'productoId' });
 
-    console.log('Cardinalidades (Relaciones) configuradas correctamente.');
+  // Las relaciones 1 a N subyacentes con la tabla intermedia
+  CarritoModel.hasMany(CarritoItemModel, { foreignKey: 'carritoId' });
+  CarritoItemModel.belongsTo(CarritoModel, { foreignKey: 'carritoId' });
+  ProductoModel.hasMany(CarritoItemModel, { foreignKey: 'productoId' });
+  CarritoItemModel.belongsTo(ProductoModel, { foreignKey: 'productoId' });
+
+  console.log('Cardinalidades (Relaciones) configuradas correctamente.');
 };
