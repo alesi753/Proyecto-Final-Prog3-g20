@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, perfil } = require('../controllers/auth.controller');
-const { verificarToken } = require('../middleware/auth.middleware');
+const { AuthController } = require('../controllers/auth.controller');
+const { AuthMiddleware } = require('../middleware/auth.middleware');
 
 // POST /api/auth/register - Registro de usuario (pública)
-router.post('/register', register);
+router.post('/register', AuthController.register);
 
 // POST /api/auth/login - Inicio de sesión (pública)
-router.post('/login', login);
+router.post('/login', AuthController.login);
 
 // GET /api/auth/perfil - Obtener perfil (protegida)
-router.get('/perfil', verificarToken, perfil);
+router.get('/perfil', AuthMiddleware.verificarToken, AuthController.perfil);
 
 module.exports = router;
