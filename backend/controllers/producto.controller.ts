@@ -189,10 +189,17 @@ export class ProductoController {
       // Si existe y no tiene relaciones, lo eliminamos
       const eliminado = await ProductoModel.deleteProduct(id);
 
+      if (!eliminado) {
+        res.status(500).json({
+          message: "No se pudo eliminar el producto.",
+        });
+        return;
+      }
+
       res.status(200).json({
         message: "Producto eliminado con éxito.",
-        data: eliminado,
       });
+      
     } catch (error) {
       console.error("Error al eliminar el producto:", error);
       res.status(500).json({

@@ -119,9 +119,15 @@ export class CategoriaController {
       // Si existe y no tiene productos asociados, la eliminamos
       const eliminada = await CategoriaModel.deleteCategory(id);
 
+      if (!eliminada) {
+        res.status(500).json({
+          message: "No se pudo eliminar la categoría.",
+        });
+        return;
+      }
+
       res.status(200).json({
-        message: "Categoría eliminada con éxito.",
-        data: eliminada,
+        message: "Categoría eliminada con éxito."
       });
     } catch (error) {
       console.error("Error al eliminar la categoría:", error);

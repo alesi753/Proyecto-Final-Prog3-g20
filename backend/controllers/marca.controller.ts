@@ -113,12 +113,20 @@ export class MarcaController {
         return;
       }
 
-      const eliminada = await MarcaModel.deleteMarca(id);
+      // Si existe y no tiene relaciones, lo eliminamos
+      const eliminado = await MarcaModel.deleteMarca(id);
+
+      if (!eliminado) {
+        res.status(500).json({
+          message: "No se pudo eliminar la marca.",
+        });
+        return;
+      }
 
       res.status(200).json({
         message: "Marca eliminada con éxito.",
-        data: eliminada,
       });
+
     } catch (error) {
       console.error("Error al eliminar la marca:", error);
       res.status(500).json({
