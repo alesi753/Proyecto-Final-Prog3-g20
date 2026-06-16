@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { crearCategoria, obtenerCategorias } = require('../controllers/categoria.controller');
-const { verificarToken } = require('../middleware/auth');
+const { verificarToken } = require('../middleware/auth.middleware');
 
 const router = Router();
 
