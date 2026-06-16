@@ -5,6 +5,7 @@ import { CategoriaModel }  from './categoria.model';
 import { ProductoModel }   from './producto.model';
 import { OrderItemModel }  from './orden-item.model';
 import { CarritoItemModel } from './carrito-item.model';
+import { MarcaModel }      from './marca.model';
 
 export const configurarCardinalidades = () => {
 
@@ -16,9 +17,17 @@ export const configurarCardinalidades = () => {
   UsuarioModel.hasMany(OrdenModel, { foreignKey: 'usuarioId' });
   OrdenModel.belongsTo(UsuarioModel, { foreignKey: 'usuarioId' });
 
+  // MARCA — PRODUCTOS (1:N)
+  MarcaModel.hasMany(ProductoModel, { foreignKey: 'marcaId' });
+  ProductoModel.belongsTo(MarcaModel, { foreignKey: 'marcaId' });
+
   // CATEGORÍA — PRODUCTOS (1:N)
   CategoriaModel.hasMany(ProductoModel, { foreignKey: 'categoriaId' });
   ProductoModel.belongsTo(CategoriaModel, { foreignKey: 'categoriaId' });
+
+  // CATEGORÍA → CATEGORÍA (1:N self-ref)
+  CategoriaModel.hasMany(CategoriaModel, { foreignKey: 'padreId', as: 'subcategorias' });
+  CategoriaModel.belongsTo(CategoriaModel, { foreignKey: 'padreId', as: 'padre' });
 
   // ÓRDENES ↔ PRODUCTOS (N:M via OrdenItem)
   OrdenModel.belongsToMany(ProductoModel, { through: OrderItemModel, foreignKey: 'ordenId' });

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, perfil } = require('../controllers/authController');
-const { verificarToken } = require('../middleware/auth');
+const { register, login, perfil } = require('../controllers/auth.controller');
+const { verificarToken } = require('../middleware/auth.middleware');
 
 // POST /api/auth/register - Registro de usuario (pública)
 router.post('/register', register);

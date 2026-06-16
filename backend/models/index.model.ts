@@ -48,6 +48,8 @@ export const Orden: any       = require('./orden.model').OrdenModel;
 export const OrdenItem: any   = require('./orden-item.model').OrderItemModel;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Categoria: any   = require('./categoria.model').CategoriaModel;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const Marca: any       = require('./marca.model').MarcaModel;
 
 // Wire all associations after every model is registered
 require('./cardinalidades.model').configurarCardinalidades();
