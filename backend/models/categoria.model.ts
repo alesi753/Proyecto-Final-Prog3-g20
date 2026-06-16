@@ -1,7 +1,6 @@
 import { sequelize } from "./index.model";
 import { DataTypes, Model, Optional } from "sequelize";
 import { InterfaceCategoria } from "../interfaces/categoria.interfaces";
-import { ProductoModel } from "./producto.model";
 
 type InputCategoria = Omit<InterfaceCategoria, "id">;
 interface CategoriaCreationAttributes extends Optional<
@@ -40,32 +39,9 @@ export class CategoriaModel
     return await categoria.update(updateData);
   }
 
-  static async deleteCategory(id: number): Promise<{
-    success: boolean;
-    reason?: "NOT_FOUND" | "HAS_PRODUCTS";
-  }> {
-    
-    // Buscamos la categoría para verificar si existe
-    const categoria = await CategoriaModel.findByPk(id);
-
-    // Si no existe, retornamos un error indicando que no se encontró
-    if (!categoria) {
-      return { success: false, reason: "NOT_FOUND" };
-    }
-
-    // Contamos cuántos productos están asociados a esta categoría
-    const productosAsociados = await ProductoModel.count({
-      where: { categoriaId: id },
-    });
-
-    // Si hay productos asociados, no permitimos eliminarla y retornamos un error indicando que tiene productos asociados
-    if (productosAsociados > 0) {
-      return { success: false, reason: "HAS_PRODUCTS" };
-    }
-
-    // Si existe y no tiene productos asociados, se elimina
-    await categoria.destroy();
-    return { success: true };
+  static async deleteCategory(id: number): Promise<boolean> {
+    const deletedRows = await CategoriaModel.destroy({ where: { id } });
+    return deletedRows > 0;
   }
 }
 

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { CategoriaModel } from "../models/categoria.model";
+import { ProductoModel } from "../models/producto.model";
 
 export class CategoriaController {
   // Obtiene todas las categorías
@@ -91,18 +92,23 @@ export class CategoriaController {
   static async deleteCategory(req: Request, res: Response): Promise<void> {
     try {
       const id = Number(req.params.id);
-      const result = await CategoriaModel.deleteCategory(id);
 
-      // Si la categoría no existe, respondemos 404
-      if (!result.success && result.reason === "NOT_FOUND") {
+      // Primero verificamos si la categoría existe
+      const categoria = await CategoriaModel.findCategoryById(id);
+
+      if (!categoria) {
         res.status(404).json({
           message: "La categoría que intentas eliminar no existe.",
         });
         return;
       }
 
-      // Si la categoría tiene productos asociados, respondemos 409
-      if (!result.success && result.reason === "HAS_PRODUCTS") {
+      // Verificamos si tiene productos asociados antes de eliminarla
+      const productosAsociados = await ProductoModel.count({
+        where: { categoriaId: id },
+      });
+
+      if (productosAsociados > 0) {
         res.status(409).json({
           message:
             "No se puede eliminar la categoría porque tiene productos asociados.",
@@ -110,7 +116,9 @@ export class CategoriaController {
         return;
       }
 
-      // Si todo salió bien, respondemos éxito
+      // Si existe y no tiene productos asociados, la eliminamos
+      await CategoriaModel.deleteCategory(id);
+
       res.status(200).json({
         message: "Categoría eliminada con éxito.",
       });

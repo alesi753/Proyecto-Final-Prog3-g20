@@ -11,7 +11,7 @@ export class CategoriaMiddleware {
     const id = Number(req.params.id);
 
     // Verificamos que el id sea un número válido y mayor a 0
-    if (Number.isNaN(id) || id <= 0) {
+    if (!Number.isInteger(id) || id <= 0) {
       res.status(400).json({
         message: "El id de la categoría debe ser un número válido mayor a 0.",
       });
@@ -51,7 +51,7 @@ export class CategoriaMiddleware {
     if (padreId !== undefined && padreId !== null) {
       const parsedPadreId = Number(padreId);
 
-      if (Number.isNaN(parsedPadreId) || parsedPadreId <= 0) {
+      if (!Number.isInteger(parsedPadreId) || parsedPadreId <= 0) {
         res.status(400).json({
           message: "padreId debe ser un número válido mayor a 0 o null.",
         });
@@ -102,7 +102,7 @@ export class CategoriaMiddleware {
     if (padreId !== undefined && padreId !== null) {
       const parsedPadreId = Number(padreId);
 
-      if (Number.isNaN(parsedPadreId) || parsedPadreId <= 0) {
+      if (!Number.isInteger(parsedPadreId) || parsedPadreId <= 0) {
         res.status(400).json({
           message:
             "Si envías padreId, debe ser un número válido mayor a 0 o null.",
