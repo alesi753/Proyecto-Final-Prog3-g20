@@ -1,11 +1,11 @@
 const { Router } = require('express');
 const { obtenerCarrito, agregarItem, eliminarItem } = require('../controllers/carrito.controller');
-const { verificarToken } = require('../middleware/auth.middleware');
+const { AuthMiddleware } = require('../middleware/auth.middleware');
 
 const router = Router();
 
 // Endpoint bloqueado: Todo require validación de token JWT
-router.use(verificarToken);
+router.use(AuthMiddleware.verificarToken);
 
 // [GET] Leer la memoria actual del carrito
 router.get('/', obtenerCarrito);

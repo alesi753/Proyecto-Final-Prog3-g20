@@ -1,21 +1,16 @@
 const { Router } = require('express');
-const { 
-  crearProducto, 
-  obtenerProductosActivos, 
-  actualizarProducto, 
-  eliminarProductoLogico 
-} = require('../controllers/producto.controller');
+const { ProductoController } = require('../controllers/producto.controller');
 
-const { verificarToken } = require('../middleware/auth.middleware');
+const { AuthMiddleware } = require('../middleware/auth.middleware');
 
 const router = Router();
 
 // Endpoint público: Lectura del catálogo
-router.get('/', obtenerProductosActivos);
+router.get('/', ProductoController.getAllProducts);
 
 // Endpoints protegidos: Modificación del disco
-router.post('/', verificarToken, crearProducto);
-router.put('/:id', verificarToken, actualizarProducto);
-router.delete('/:id', verificarToken, eliminarProductoLogico);
+router.post('/', AuthMiddleware.verificarToken, ProductoController.createProduct);
+router.put('/:id', AuthMiddleware.verificarToken, ProductoController.updateProduct);
+router.delete('/:id', AuthMiddleware.verificarToken, ProductoController.deleteProduct);
 
 module.exports = router;

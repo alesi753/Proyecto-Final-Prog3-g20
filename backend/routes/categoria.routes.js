@@ -1,13 +1,13 @@
 const { Router } = require('express');
-const { crearCategoria, obtenerCategorias } = require('../controllers/categoria.controller');
-const { verificarToken } = require('../middleware/auth.middleware');
+const { CategoriaController } = require('../controllers/categoria.controller');
+const { AuthMiddleware } = require('../middleware/auth.middleware');
 
 const router = Router();
 
 // [GET] Lectura pública del mapa de categorías
-router.get('/', obtenerCategorias);
+router.get('/', CategoriaController.getAllCategories);
 
 // [POST] Escritura restringida al administrador/sistema
-router.post('/', verificarToken, crearCategoria);
+router.post('/', AuthMiddleware.verificarToken, CategoriaController.createCategory);
 
 module.exports = router;

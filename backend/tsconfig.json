@@ -8,6 +8,11 @@
     "types": ["node"],
     "forceConsistentCasingInFileNames": true /* Respeta mayúsculas y minúsculas */,
     "strict": true /* Habilita el tipado estricto de TS */,
-    "skipLibCheck": true /* Omite la comprobación de tipos de las librerías */
-  }
+    "skipLibCheck": true /* Omite la comprobación de tipos de las librerías */,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "allowJs": true
+  },
+  "include": ["**/*.ts", "**/*.js"],
+  "exclude": ["node_modules", "dist"]
 }
