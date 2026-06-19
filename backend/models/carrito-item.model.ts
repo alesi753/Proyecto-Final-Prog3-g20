@@ -60,6 +60,20 @@ export class CarritoItemModel
     return deletedRows > 0;
   }
 
+  // Elimina todos los items de un carrito específico
+  // Se usa al confirmar la compra para vaciar el carrito del usuario
+  static async deleteCartItemsByCartId(
+    carritoId: number,
+    transaction?: any,
+  ): Promise<boolean> {
+    const deletedRows = await CarritoItemModel.destroy({
+      where: { carritoId },
+      transaction,
+    });
+
+    return deletedRows > 0;
+  }
+
   // Elimina un item del carrito usando carritoId y productoId
   static async deleteCartItemByCartAndProduct(
     carritoId: number,
