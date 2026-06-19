@@ -46,21 +46,34 @@ export class OrdenModel
     return await OrdenModel.findByPk(id);
   }
 
-  static async createOrder(orderInput: InputOrder): Promise<OrdenModel> {
-    return await OrdenModel.create(orderInput);
+  // Crea una nueva orden
+  // Permite recibir una transacción para usarla al momento de confirmar la compra
+  static async createOrder(
+    orderInput: InputOrder,
+    transaction?: any,
+  ): Promise<OrdenModel> {
+    return await OrdenModel.create(orderInput, { transaction });
   }
 
+  // Actualiza una orden existente por id
+  // Permite usar una transacción si la actualización forma parte de otra operación más grande
   static async updateOrder(
     id: number,
     updateData: Partial<InputOrder>,
+    transaction?: any,
   ): Promise<OrdenModel | null> {
-    const order = await OrdenModel.findByPk(id);
+    const order = await OrdenModel.findByPk(id, { transaction });
     if (!order) return null;
-    return await order.update(updateData);
+    return await order.update(updateData, { transaction });
   }
 
-  static async deleteOrder(id: number): Promise<boolean> {
-    const deletedRows = await OrdenModel.destroy({ where: { id } });
+  // Elimina una orden por id
+  // Permite usar una transacción si el borrado se realiza junto con otros cambios
+  static async deleteOrder(id: number, transaction?: any): Promise<boolean> {
+    const deletedRows = await OrdenModel.destroy({
+      where: { id },
+      transaction,
+    });
     return deletedRows > 0;
   }
 }
