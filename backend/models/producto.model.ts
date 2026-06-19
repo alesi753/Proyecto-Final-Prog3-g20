@@ -24,8 +24,13 @@ export class ProductoModel
     return await ProductoModel.findAll();
   }
 
-  static async findProductById(id: number): Promise<ProductoModel | null> {
-    return await ProductoModel.findByPk(id);
+  // Busca un producto por su id
+  // Permite recibir una transacción para usarla en operaciones más grande
+  static async findProductById(
+    id: number,
+    transaction?: any,
+  ): Promise<ProductoModel | null> {
+    return await ProductoModel.findByPk(id, { transaction });
   }
 
   static async createProduct(

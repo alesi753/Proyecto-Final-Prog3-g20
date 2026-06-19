@@ -56,7 +56,7 @@ export class OrdenModel
   }
 
   // Actualiza una orden existente por id
-  // Permite usar una transacción si la actualización forma parte de otra operación más grande
+  // Permite usar una transacción si la actualización forma parte de otra operación más grande 
   static async updateOrder(
     id: number,
     updateData: Partial<InputOrder>,
