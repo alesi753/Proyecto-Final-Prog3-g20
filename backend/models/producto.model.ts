@@ -1,13 +1,17 @@
-import { sequelize } from './index.model';
-import { DataTypes, Model, Optional } from 'sequelize';
-import { InterfaceProducto } from '../interfaces/producto.interfaces';
+import { sequelize } from "./index.model";
+import { DataTypes, Model, Optional } from "sequelize";
+import { InterfaceProducto } from "../interfaces/producto.interfaces";
 
-type ProductoModelAttributes = Omit<InterfaceProducto, 'createdAt' | 'updatedAt'>;
-type ProductCreationAttributes = Optional<ProductoModelAttributes, 'id'>;
+type ProductoModelAttributes = Omit<
+  InterfaceProducto,
+  "createdAt" | "updatedAt"
+>;
+type ProductCreationAttributes = Optional<ProductoModelAttributes, "id">;
 
 export class ProductoModel
   extends Model<ProductoModelAttributes, ProductCreationAttributes>
-  implements InterfaceProducto {
+  implements InterfaceProducto
+{
   declare id: number;
   declare categoriaId: number;
   declare marcaId: number;
@@ -20,18 +24,42 @@ export class ProductoModel
     return await ProductoModel.findAll();
   }
 
-  static async findProductById(id: number): Promise<ProductoModel | null> {
-    return await ProductoModel.findByPk(id);
+  // Busca un producto por su id
+  // Permite recibir una transacción para usarla en operaciones más grande
+  static async findProductById(
+    id: number,
+    transaction?: any,
+  ): Promise<ProductoModel | null> {
+    return await ProductoModel.findByPk(id, { transaction });
   }
 
-  static async createProduct(productInput: ProductCreationAttributes): Promise<ProductoModel> {
+  static async createProduct(
+    productInput: ProductCreationAttributes,
+  ): Promise<ProductoModel> {
     return await ProductoModel.create(productInput);
   }
 
-  static async updateProduct(id: number, updateData: Partial<ProductoModelAttributes>): Promise<ProductoModel | null> {
+  static async updateProduct(
+    id: number,
+    updateData: Partial<ProductoModelAttributes>,
+  ): Promise<ProductoModel | null> {
     const product = await ProductoModel.findByPk(id);
     if (!product) return null;
     return await product.update(updateData);
+  }
+
+  // Actualiza el stock de un producto específico
+  // Se usa al confirmar la compra para descontar las unidades compradas
+  static async updateProductStock(
+    id: number,
+    newStock: number,
+    transaction?: any,
+  ): Promise<ProductoModel | null> {
+    const product = await ProductoModel.findByPk(id, { transaction });
+
+    if (!product) return null;
+
+    return await product.update({ stock: newStock }, { transaction });
   }
 
   static async deleteProduct(id: number): Promise<boolean> {
@@ -52,12 +80,12 @@ ProductoModel.init(
     categoriaId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: 'categorias', key: 'id' }
+      references: { model: "categorias", key: "id" },
     },
     marcaId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: 'marcas', key: 'id' }
+      references: { model: "marcas", key: "id" },
     },
     modelo: { type: DataTypes.STRING(255), allowNull: false },
     precio: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
@@ -65,12 +93,12 @@ ProductoModel.init(
     especificaciones: {
       type: DataTypes.JSONB,
       allowNull: false,
-      defaultValue: {}
-    }
+      defaultValue: {},
+    },
   },
   {
     sequelize,
-    tableName: 'productos',
-    timestamps: false
-  }
+    tableName: "productos",
+    timestamps: false,
+  },
 );

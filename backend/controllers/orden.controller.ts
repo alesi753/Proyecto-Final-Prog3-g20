@@ -1,126 +1,151 @@
-import { Request, Response } from 'express';
-import { sequelize, Carrito, CarritoItem, Producto, OrdenItem } from '../models/index.model';
-import { OrdenModel } from '../models/orden.model'; // Tu nuevo modelo tipado
-
-interface AuthRequest extends Request {
-  user?: { id: number };
-}
+import { Response } from "express";
+import { sequelize } from "../models/index.model";
+import { OrdenModel } from "../models/orden.model";
+import { OrderItemModel } from "../models/orden-item.model";
+import { ProductoModel } from "../models/producto.model";
+import { CarritoModel } from "../models/carrito.model";
+import { CarritoItemModel } from "../models/carrito-item.model";
+import { AuthRequest } from "../middleware/auth.middleware";
 
 export class OrdenController {
-  
-  static async procesarCheckout(req: AuthRequest, res: Response): Promise<void> {
-    
+  // Procesa la compra del usuario autenticado a partir de los productos que tiene en su carrito
+  // Usa una transacción para asegurar que todos los cambios se realicen juntos o se reviertan si ocurre un error
+  static async procesarCheckout(req: AuthRequest, res: Response) {
+    // Verifica que haya un usuario autenticado antes de iniciar la transacción
+    if (!req.user) {
+      res.status(401).json({ message: "Acceso denegado." });
+      return;
+    }
+
     const t = await sequelize.transaction();
 
     try {
-      const usuarioId = req.user?.id;
+      const usuarioId = req.user.id;
 
-      if (!usuarioId) {
-        await t.rollback();
-        res.status(401).json({ message: 'Acceso denegado: Token de seguridad ausente.' });
-        return;
-      }
+      // Busca el carrito del usuario incluyendo los productos que contiene
+      const carrito: any = await CarritoModel.findCartByUserIdWithProducts(
+        usuarioId,
+        t,
+      );
 
-      
-      const carrito: any = await Carrito.findOne({
-        where: { usuarioId },
-        include: [{
-          model: Producto,
-          as: 'productos',
-          through: { attributes: ['cantidad'] }
-        }],
-        transaction: t
-      });
-
+      // Verifica que el carrito exista y tenga productos para comprar
       if (!carrito || !carrito.productos || carrito.productos.length === 0) {
         await t.rollback();
-        res.status(400).json({ message: 'Excepción de ejecución: El carrito está vacío.' });
+        res.status(400).json({ message: "El carrito está vacío." });
         return;
       }
 
-     
       let totalOrden = 0;
-      const itemsProcesados = [];
+      const itemsProcesados: {
+        productoId: number;
+        cantidad: number;
+        precioAlComprar: number;
+      }[] = [];
 
+      // Recorre los productos del carrito para validar stock y preparar los items de la orden
       for (const producto of carrito.productos) {
-        const cantidadSolicitada = producto.CarritoItem.cantidad;
+        // Obtiene la cantidad del producto desde la tabla intermedia carrito_item
+        const cantidad = producto.CarritoItem
+          ? producto.CarritoItem.cantidad
+          : 0;
 
-        if (producto.stock < cantidadSolicitada) {
+        // Verifica que haya stock suficiente para completar la compra
+        if (producto.stock < cantidad) {
           await t.rollback();
-          res.status(409).json({ 
-            message: `Excepción de inventario: Stock insuficiente para [${producto.nombre}]. Disponible: ${producto.stock}` 
+          res.status(400).json({
+            message: `No hay suficiente stock para el producto ${producto.modelo}.`,
           });
           return;
         }
 
-        totalOrden += producto.precio * cantidadSolicitada;
+        // Suma el subtotal del producto al total general de la orden
+        totalOrden += Number(producto.precio) * cantidad;
+
+        // Guarda los datos del item para luego crear los registros de la orden
         itemsProcesados.push({
           productoId: producto.id,
-          cantidad: cantidadSolicitada,
-          precioAlComprar: producto.precio 
+          cantidad,
+          precioAlComprar: producto.precio,
         });
       }
 
-      
-      const nuevaOrden = await OrdenModel.create({
-        usuarioId,
-        precioTotal: totalOrden,
-        estado: 'pendiente'
-      }, { transaction: t });
+      // Crea la orden con el total calculado y estado inicial pendiente
+      const nuevaOrden = await OrdenModel.createOrder(
+        {
+          usuarioId,
+          precioTotal: totalOrden,
+          estado: "pendiente",
+        },
+        t,
+      );
 
-     
-      const ordenItemsData = itemsProcesados.map(item => ({
+      // Agrega el id de la nueva orden a cada item procesado
+      const ordenItemsData = itemsProcesados.map((item) => ({
         ordenId: nuevaOrden.id,
-        ...item
+        ...item,
       }));
-      await OrdenItem.bulkCreate(ordenItemsData, { transaction: t });
 
+      // Crea todos los items de la orden en una sola operación
+      await OrderItemModel.bulkCreateOrderItems(ordenItemsData, t);
+
+      // Descuenta del stock la cantidad comprada de cada producto
       for (const item of itemsProcesados) {
-        const productoDb: any = await Producto.findByPk(item.productoId, { transaction: t });
-        await productoDb.update({
-          stock: productoDb.stock - item.cantidad
-        }, { transaction: t });
+        const producto = await ProductoModel.findProductById(
+          item.productoId,
+          t,
+        );
+
+        // Verifica que el producto siga existiendo antes de actualizarlo
+        if (!producto) {
+          await t.rollback();
+          res.status(404).json({ message: "Producto no encontrado." });
+          return;
+        }
+
+        await ProductoModel.updateProductStock(
+          item.productoId,
+          producto.stock - item.cantidad,
+          t,
+        );
       }
 
-      
-      await CarritoItem.destroy({
-        where: { carritoId: carrito.id },
-        transaction: t
-      });
+      // Vacía el carrito eliminando todos sus items después de confirmar la compra
+      await CarritoItemModel.deleteCartItemsByCartId(carrito.id, t);
 
-      
+      // Confirma todos los cambios de la transacción
       await t.commit();
 
       res.status(201).json({
-        message: 'Checkout ejecutado con éxito. Transacción completada.',
-        orden: nuevaOrden
+        message: "Compra realizada con éxito.",
+        orden: nuevaOrden,
       });
-
     } catch (error) {
-      // Dump de memoria y reversión del estado en caso de crash
+      // Revierte todos los cambios si ocurre cualquier error durante el proceso de compra
       await t.rollback();
-      console.error('Crash fatal en motor de pagos (procesarCheckout):', error);
-      res.status(500).json({ message: 'Fallo catastrófico en el motor transaccional. Operación abortada.' });
+      console.error("Error al procesar la compra:", error);
+      res.status(500).json({ message: "Error interno del servidor." });
     }
   }
 
-  static async obtenerHistorialOrdenes(req: AuthRequest, res: Response): Promise<void> {
+  // Obtiene el historial de órdenes del usuario autenticado junto con los items de cada orden
+  static async obtenerHistorialOrdenes(req: AuthRequest, res: Response) {
     try {
-      const usuarioId = req.user?.id;
+      // Verifica que haya un usuario autenticado
+      if (!req.user) {
+        res.status(401).json({ message: "Acceso denegado." });
+        return;
+      }
 
-      // Lectura de logs transaccionales
-      const ordenes = await OrdenModel.findAll({
-        where: { usuarioId },
-        include: [{
-          model: OrdenItem,
-          as: 'items' 
-        }]
-      });
+      const usuarioId = req.user.id;
+
+      // Busca todas las órdenes del usuario incluyendo sus items asociados
+      const ordenes =
+        await OrdenModel.findAllOrdersByUserIdWithItems(usuarioId);
 
       res.status(200).json({ ordenes });
     } catch (error) {
-      console.error('Crash en obtenerHistorialOrdenes:', error);
-      res.status(500).json({ message: 'Fallo de lectura del historial contable.' });
+      console.error("Error al obtener el historial de órdenes:", error);
+      res.status(500).json({ message: "Error interno del servidor." });
     }
   }
 }

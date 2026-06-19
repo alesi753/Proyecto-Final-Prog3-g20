@@ -8,6 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret_por_defecto';
 export interface TokenPayload {
     id: number;
     correo: string;
+    rol: 'admin' | 'cliente';
 }
 
 // Extendemos la interfaz Request de Express para incluir un campo opcional 'user' que tendrá la información del token decodificado
@@ -18,10 +19,11 @@ export interface AuthRequest extends Request {
 export class AuthMiddleware {
 
   // El objeto user que se le pasa a generarToken solo incluye los campos necesarios para el payload del token, id y correo.
-  public static generarToken(user: { id: number; correo: string }): string {
+  public static generarToken(user: { id: number; correo: string; rol: 'admin' | 'cliente' }): string {
     const payload: TokenPayload = { 
       id: user.id, 
-      correo: user.correo 
+      correo: user.correo,
+      rol: user.rol
     };
     return jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
   }
