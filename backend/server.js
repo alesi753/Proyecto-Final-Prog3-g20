@@ -33,22 +33,15 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('combined'));
 }
 
-// ── Health check ──────────────────────────────────────────────────────────────
-app.get('/health', (_req, res) => {
-  res.status(200).json({
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development'
-  });
-});
-
 // ── Routes ────────────────────────────────────────────────────────────────────
-app.use('/api',             require('./routes/index.js'));           // /api/auth + /api/health + /api/test
-app.use('/api/categorias',  require('./routes/categoria.routes.js'));
-app.use('/api/productos',   require('./routes/producto.routes.js'));
-app.use('/api/carrito',     require('./routes/carrito.routes.js'));
-app.use('/api/ordenes',     require('./routes/orden.routes.js'));
+app.use('/api', require('./routes/index.router.js')); // Rutas /api/health y /api/test
+app.use('/api/auth', require('./routes/auth.router.js'));
+app.use('/api/marcas', require('./routes/marca.router.js'));
+app.use('/api/categorias', require('./routes/categoria.router.js'));
+app.use('/api/productos', require('./routes/producto.router.js'));
+app.use('/api/usuarios', require('./routes/usuario.router.js'));
+app.use('/api/carrito', require('./routes/carrito.router.js'));
+app.use('/api/ordenes', require('./routes/orden.router.js'));
 
 // ── 404 ───────────────────────────────────────────────────────────────────────
 app.use((_req, res) => {
