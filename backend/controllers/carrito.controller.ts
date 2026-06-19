@@ -1,113 +1,168 @@
-import { Request, Response } from 'express';
-import { CarritoModel } from '../models/carrito.model';
-import { CarritoItem, Producto } from '../models/index.model'; 
+import { Response } from "express";
+import { CarritoModel } from "../models/carrito.model";
+import { CarritoItem, Producto } from "../models/index.model";
+import { AuthRequest } from "../middleware/auth.middleware";
 
 export class CarritoController {
-
-  static async obtenerCarrito(req: Request, res: Response): Promise<void> {
+  // Obtiene el carrito del usuario autenticado
+  // Se asume que AuthMiddleware ya validó el token
+  static async obtenerCarrito(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const usuarioId = (req as any).user.id;
+      // Verificamos que el usuario esté autenticado
+      if (!req.user) {
+        res.status(401).json({ message: "Usuario no autenticado." });
+        return;
+      }
 
-    
+      const usuarioId = req.user.id;
+
+      // Buscamos el carrito del usuario
       let carrito = await CarritoModel.findCartByUserId(usuarioId);
+
+      // Si no existe, lo creamos
       if (!carrito) {
         carrito = await CarritoModel.createCart({ usuarioId });
       }
 
-      const carritoConHardware = await CarritoModel.findOne({
+      // Traemos el carrito con los productos asociados
+      const carritoConProductos = await CarritoModel.findOne({
         where: { id: carrito.id },
-        include: [{
-          model: Producto,
-          as: 'productos', 
-          through: { attributes: ['cantidad'] }
-        }]
+        include: [
+          {
+            model: Producto,
+            as: "productos",
+            through: { attributes: ["cantidad"] },
+          },
+        ],
       });
 
-      res.status(200).json(carritoConHardware);
+      res.status(200).json(carritoConProductos);
     } catch (error) {
-      console.error('Crash al obtener el carrito:', error);
-      res.status(500).json({ message: 'Fallo de lectura de carrito de compras.' });
+      console.error("Error al obtener el carrito:", error);
+      res.status(500).json({
+        message: "Error interno al obtener el carrito.",
+      });
     }
   }
 
-  static async agregarItem(req: Request, res: Response): Promise<void> {
+  // Agrega un producto al carrito del usuario
+  // Se asume que validateAgregarItem ya validó productoId y cantidad
+  static async agregarItem(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const usuarioId = (req as any).user.id;
+      // Verificamos que el usuario esté autenticado
+      if (!req.user) {
+        res.status(401).json({ message: "Usuario no autenticado." });
+        return;
+      }
+
+      const usuarioId = req.user.id;
       const { productoId, cantidad } = req.body;
 
-      // Validación de entrada
-      if (!productoId || !cantidad || cantidad <= 0) {
-        res.status(400).json({ message: 'Fallo de integridad: Parámetros inválidos o cantidad negativa.' });
-        return;
-      }
-
-      // Verificación de hardware en el catálogo
+      // Verificamos que el producto exista
       const producto: any = await Producto.findByPk(productoId);
+
       if (!producto) {
-        res.status(404).json({ message: 'Hardware no encontrado.' });
-        return;
-      }
-      
-      if (producto.stock < cantidad) {
-        res.status(409).json({ message: `Excepción de inventario: Stock insuficiente. Disponible: ${producto.stock}` });
+        res.status(404).json({ message: "Producto no encontrado." });
         return;
       }
 
-      // Puntero al carrito del usuario
+      // Verificamos que haya stock suficiente
+      if (producto.stock < cantidad) {
+        res.status(409).json({
+          message: `Stock insuficiente. Disponible: ${producto.stock}.`,
+        });
+        return;
+      }
+
+      // Buscamos o creamos el carrito del usuario
       let carrito = await CarritoModel.findCartByUserId(usuarioId);
+
       if (!carrito) {
         carrito = await CarritoModel.createCart({ usuarioId });
       }
 
-      // Lectura de la tabla pivote
+      // Verificamos si el producto ya está en el carrito
       const itemExistente: any = await CarritoItem.findOne({
-        where: { carritoId: carrito.id, productoId }
+        where: { carritoId: carrito.id, productoId },
       });
 
+      // Si ya existe, actualizamos la cantidad
       if (itemExistente) {
         const nuevaCantidad = itemExistente.cantidad + cantidad;
+
+        // Validamos que la nueva cantidad no supere el stock
         if (producto.stock < nuevaCantidad) {
-          res.status(409).json({ message: 'Excepción de inventario: La suma supera el stock físico.' });
+          res.status(409).json({
+            message: "La cantidad total solicitada supera el stock disponible.",
+          });
           return;
         }
+
         await itemExistente.update({ cantidad: nuevaCantidad });
       } else {
-        await CarritoItem.create({ carritoId: carrito.id, productoId, cantidad });
+        // Si no existe, creamos un nuevo item en el carrito
+        await CarritoItem.create({
+          carritoId: carrito.id,
+          productoId,
+          cantidad,
+        });
       }
 
-      res.status(200).json({ message: 'Hardware asignado al bloque de memoria del carrito.' });
+      res.status(200).json({
+        message: "Producto agregado al carrito con éxito.",
+      });
     } catch (error) {
-      console.error('Crash transaccional en agregarItem:', error);
-      res.status(500).json({ message: 'Fallo de escritura transaccional.' });
+      console.error("Error al agregar item al carrito:", error);
+      res.status(500).json({
+        message: "Error interno al agregar el producto al carrito.",
+      });
     }
   }
 
-  static async eliminarItem(req: Request, res: Response): Promise<void> {
+  // Elimina un producto del carrito del usuario
+  // Se asume que validateProductoIdParam ya validó el productoId del parámetro
+  static async eliminarItem(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const usuarioId = (req as any).user.id;
-      const productoId = parseInt(req.params.productoId as string, 10);
-
-      const carrito = await CarritoModel.findCartByUserId(usuarioId);
-      if (!carrito) {
-        res.status(404).json({ message: 'Memoria vacía: Carrito no inicializado.' });
+      // Verificamos que el usuario esté autenticado
+      if (!req.user) {
+        res.status(401).json({ message: "Usuario no autenticado." });
         return;
       }
 
+      const usuarioId = req.user.id;
+      const productoId = Number(req.params.productoId);
+
+      // Buscamos el carrito del usuario
+      const carrito = await CarritoModel.findCartByUserId(usuarioId);
+
+      if (!carrito) {
+        res.status(404).json({ message: "Carrito no encontrado." });
+        return;
+      }
+
+      // Buscamos el item en el carrito
       const item = await CarritoItem.findOne({
-        where: { carritoId: carrito.id, productoId }
+        where: { carritoId: carrito.id, productoId },
       });
 
       if (!item) {
-        res.status(404).json({ message: 'Puntero nulo: Hardware no encontrado en el carrito.' });
+        res.status(404).json({
+          message: "El producto no se encuentra en el carrito.",
+        });
         return;
       }
 
-      // Baja física del registro en la tabla pivote
+      // Eliminamos el item del carrito
       await item.destroy();
-      res.status(200).json({ message: 'Hardware purgado del carrito.' });
+
+      res.status(200).json({
+        message: "Producto eliminado del carrito con éxito.",
+      });
     } catch (error) {
-      console.error('Crash en eliminarItem:', error);
-      res.status(500).json({ message: 'Fallo al purgar memoria del servidor.' });
+      console.error("Error al eliminar item del carrito:", error);
+      res.status(500).json({
+        message: "Error interno al eliminar el producto del carrito.",
+      });
     }
   }
 }
