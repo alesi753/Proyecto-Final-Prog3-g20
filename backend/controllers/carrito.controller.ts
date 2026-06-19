@@ -1,12 +1,16 @@
 import { Response } from "express";
 import { CarritoModel } from "../models/carrito.model";
-import { CarritoItem, Producto } from "../models/index.model";
+import { CarritoItemModel } from "../models/carrito-item.model";
+import { ProductoModel } from "../models/producto.model";
 import { AuthRequest } from "../middleware/auth.middleware";
 
 export class CarritoController {
-  // Obtiene el carrito del usuario autenticado
+  // Obtiene el carrito actual del usuario autenticado con sus productos
   // Se asume que AuthMiddleware ya validó el token
-  static async obtenerCarrito(req: AuthRequest, res: Response): Promise<void> {
+  static async obtenerCarrito(
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> {
     try {
       // Verificamos que el usuario esté autenticado
       if (!req.user) {
@@ -25,16 +29,7 @@ export class CarritoController {
       }
 
       // Traemos el carrito con los productos asociados
-      const carritoConProductos = await CarritoModel.findOne({
-        where: { id: carrito.id },
-        include: [
-          {
-            model: Producto,
-            as: "productos",
-            through: { attributes: ["cantidad"] },
-          },
-        ],
-      });
+      const carritoConProductos = await CarritoModel.findCartById(carrito.id);
 
       res.status(200).json(carritoConProductos);
     } catch (error) {
@@ -59,7 +54,7 @@ export class CarritoController {
       const { productoId, cantidad } = req.body;
 
       // Verificamos que el producto exista
-      const producto: any = await Producto.findByPk(productoId);
+      const producto = await ProductoModel.findProductById(productoId);
 
       if (!producto) {
         res.status(404).json({ message: "Producto no encontrado." });
@@ -82,11 +77,12 @@ export class CarritoController {
       }
 
       // Verificamos si el producto ya está en el carrito
-      const itemExistente: any = await CarritoItem.findOne({
-        where: { carritoId: carrito.id, productoId },
-      });
+      const itemExistente = await CarritoItemModel.findCartItemByCartAndProduct(
+        carrito.id,
+        productoId,
+      );
 
-      // Si ya existe, actualizamos la cantidad
+      // Si ya existe, calculamos la nueva cantidad
       if (itemExistente) {
         const nuevaCantidad = itemExistente.cantidad + cantidad;
 
@@ -98,10 +94,13 @@ export class CarritoController {
           return;
         }
 
-        await itemExistente.update({ cantidad: nuevaCantidad });
+        // Actualizamos la cantidad
+        await CarritoItemModel.updateCartItem(itemExistente.id, {
+          cantidad: nuevaCantidad,
+        });
       } else {
         // Si no existe, creamos un nuevo item en el carrito
-        await CarritoItem.create({
+        await CarritoItemModel.createCartItem({
           carritoId: carrito.id,
           productoId,
           cantidad,
@@ -140,10 +139,11 @@ export class CarritoController {
         return;
       }
 
-      // Buscamos el item en el carrito
-      const item = await CarritoItem.findOne({
-        where: { carritoId: carrito.id, productoId },
-      });
+      // Verificamos que el producto esté en el carrito
+      const item = await CarritoItemModel.findCartItemByCartAndProduct(
+        carrito.id,
+        productoId,
+      );
 
       if (!item) {
         res.status(404).json({
@@ -153,7 +153,10 @@ export class CarritoController {
       }
 
       // Eliminamos el item del carrito
-      await item.destroy();
+      await CarritoItemModel.deleteCartItemByCartAndProduct(
+        carrito.id,
+        productoId,
+      );
 
       res.status(200).json({
         message: "Producto eliminado del carrito con éxito.",
