@@ -111,6 +111,7 @@ CarritoItemModel.init(
   },
   {
     sequelize,
+    modelName: 'CarritoItem',
     tableName: "carrito_items",
     timestamps: true,
     indexes: [
