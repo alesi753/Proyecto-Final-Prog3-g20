@@ -42,14 +42,38 @@ export class OrdenController {
         precioAlComprar: number;
       }[] = [];
 
-      // Recorre los productos del carrito para validar stock y preparar los items de la orden
+      // Recorre todos los productos que vienen dentro del carrito
       for (const producto of carrito.productos) {
-        // Obtiene la cantidad del producto desde la tabla intermedia carrito_item
-        const cantidad = producto.CarritoItem
-          ? producto.CarritoItem.cantidad
-          : 0;
+        // Inicializa la cantidad en 0 por seguridad
+        let cantidad = 0;
 
-        // Verifica que haya stock suficiente para completar la compra
+        // Toma la cantidad desde la tabla intermedia CarritoItemModel (relación N:M)
+        // Si existe y no es null, la convierte a número
+        if (
+          (producto as any).CarritoItemModel &&
+          (producto as any).CarritoItemModel.cantidad != null
+        ) {
+          cantidad = Number((producto as any).CarritoItemModel.cantidad);
+        }
+
+        // Inicializa el precio en 0
+        let precio = 0;
+
+        // Convierte el precio a número (DECIMAL suele venir como string en Sequelize)
+        if (producto.precio != null) {
+          precio = Number(producto.precio);
+        }
+
+        // Valida que la cantidad sea válida
+        if (cantidad <= 0) {
+          await t.rollback();
+          res.status(400).json({
+            message: `Cantidad inválida para el producto ${producto.modelo}.`,
+          });
+          return;
+        }
+
+        // Valida stock suficiente antes de permitir la compra
         if (producto.stock < cantidad) {
           await t.rollback();
           res.status(400).json({
@@ -58,14 +82,15 @@ export class OrdenController {
           return;
         }
 
-        // Suma el subtotal del producto al total general de la orden
-        totalOrden += Number(producto.precio) * cantidad;
+        // Suma al total de la orden el subtotal de este producto
+        // subtotal = precio * cantidad
+        totalOrden += precio * cantidad;
 
-        // Guarda los datos del item para luego crear los registros de la orden
+        // Guarda este item para crear luego los registros de orden_item
         itemsProcesados.push({
           productoId: producto.id,
-          cantidad,
-          precioAlComprar: producto.precio,
+          cantidad: cantidad,
+          precioAlComprar: precio,
         });
       }
 
