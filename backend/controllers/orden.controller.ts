@@ -47,13 +47,13 @@ export class OrdenController {
         // Inicializa la cantidad en 0 por seguridad
         let cantidad = 0;
 
-        // Toma la cantidad desde la tabla intermedia CarritoItemModel (relación N:M)
-        // Si existe y no es null, la convierte a número
+        // Toma la cantidad desde la tabla intermedia (relación N:M)
+        // Sequelize anida esta información bajo el alias 'CarritoItem'
         if (
-          (producto as any).CarritoItemModel &&
-          (producto as any).CarritoItemModel.cantidad != null
+          (producto as any).CarritoItem &&
+          (producto as any).CarritoItem.cantidad != null
         ) {
-          cantidad = Number((producto as any).CarritoItemModel.cantidad);
+          cantidad = Number((producto as any).CarritoItem.cantidad);
         }
 
         // Inicializa el precio en 0
