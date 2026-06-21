@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { CategoriaModel } from "../models/categoria.model";
-import { ProductoModel } from "../models/producto.model";
+import { Request, Response } from 'express';
+import { CategoriaModel } from '../models/categoria.model';
+import { ProductoModel } from '../models/producto.model';
 
 export class CategoriaController {
   // Obtiene todas las categorías
@@ -10,9 +10,9 @@ export class CategoriaController {
 
       res.status(200).json(categorias);
     } catch (error) {
-      console.error("Error al obtener las categorías:", error);
+      console.error('Error al obtener las categorías:', error);
       res.status(500).json({
-        message: "Error interno al obtener las categorías.",
+        message: 'Error interno al obtener las categorías.',
       });
     }
   }
@@ -26,16 +26,16 @@ export class CategoriaController {
 
       if (!categoria) {
         res.status(404).json({
-          message: "Categoría no encontrada.",
+          message: 'Categoría no encontrada.',
         });
         return;
       }
 
       res.status(200).json(categoria);
     } catch (error) {
-      console.error("Error al obtener la categoría:", error);
+      console.error('Error al obtener la categoría:', error);
       res.status(500).json({
-        message: "Error interno al obtener la categoría.",
+        message: 'Error interno al obtener la categoría.',
       });
     }
   }
@@ -47,13 +47,13 @@ export class CategoriaController {
       const nuevaCategoria = await CategoriaModel.createCategory(req.body);
 
       res.status(201).json({
-        message: "Categoría creada con éxito.",
+        message: 'Categoría creada con éxito.',
         data: nuevaCategoria,
       });
     } catch (error) {
-      console.error("Error al crear la categoría:", error);
+      console.error('Error al crear la categoría:', error);
       res.status(500).json({
-        message: "Error interno al crear la categoría.",
+        message: 'Error interno al crear la categoría.',
       });
     }
   }
@@ -65,24 +65,24 @@ export class CategoriaController {
       const id = Number(req.params.id);
       const categoriaActualizada = await CategoriaModel.updateCategory(
         id,
-        req.body,
+        req.body
       );
 
       if (!categoriaActualizada) {
         res.status(404).json({
-          message: "La categoría que intentas actualizar no existe.",
+          message: 'La categoría que intentas actualizar no existe.',
         });
         return;
       }
 
       res.status(200).json({
-        message: "Categoría actualizada con éxito.",
+        message: 'Categoría actualizada con éxito.',
         data: categoriaActualizada,
       });
     } catch (error) {
-      console.error("Error al actualizar la categoría:", error);
+      console.error('Error al actualizar la categoría:', error);
       res.status(500).json({
-        message: "Error interno al actualizar la categoría.",
+        message: 'Error interno al actualizar la categoría.',
       });
     }
   }
@@ -98,7 +98,7 @@ export class CategoriaController {
 
       if (!categoria) {
         res.status(404).json({
-          message: "La categoría que intentas eliminar no existe.",
+          message: 'La categoría que intentas eliminar no existe.',
         });
         return;
       }
@@ -111,7 +111,7 @@ export class CategoriaController {
       if (productosAsociados > 0) {
         res.status(409).json({
           message:
-            "No se puede eliminar la categoría porque tiene productos asociados.",
+            'No se puede eliminar la categoría porque tiene productos asociados.',
         });
         return;
       }
@@ -121,18 +121,18 @@ export class CategoriaController {
 
       if (!eliminada) {
         res.status(500).json({
-          message: "No se pudo eliminar la categoría.",
+          message: 'No se pudo eliminar la categoría.',
         });
         return;
       }
 
       res.status(200).json({
-        message: "Categoría eliminada con éxito."
+        message: 'Categoría eliminada con éxito.',
       });
     } catch (error) {
-      console.error("Error al eliminar la categoría:", error);
+      console.error('Error al eliminar la categoría:', error);
       res.status(500).json({
-        message: "Error interno al eliminar la categoría.",
+        message: 'Error interno al eliminar la categoría.',
       });
     }
   }

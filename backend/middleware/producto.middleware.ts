@@ -1,18 +1,18 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 export class ProductoMiddleware {
   // Valida el parámetro :id de la ruta
   static validateProductId(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): void {
     const id = Number(req.params.id);
 
     // El id debe ser un número entero positivo
     if (!Number.isInteger(id) || id <= 0) {
       res.status(400).json({
-        message: "El id del producto debe ser un número entero positivo.",
+        message: 'El id del producto debe ser un número entero positivo.',
       });
       return;
     }
@@ -24,7 +24,7 @@ export class ProductoMiddleware {
   static validateCreateProduct(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): void {
     const { categoriaId, marcaId, modelo, precio, stock, especificaciones } =
       req.body;
@@ -34,7 +34,7 @@ export class ProductoMiddleware {
     if (!Number.isInteger(parsedCategoriaId) || parsedCategoriaId <= 0) {
       res.status(400).json({
         message:
-          "categoriaId es obligatorio y debe ser un número entero positivo.",
+          'categoriaId es obligatorio y debe ser un número entero positivo.',
       });
       return;
     }
@@ -43,15 +43,15 @@ export class ProductoMiddleware {
     const parsedMarcaId = Number(marcaId);
     if (!Number.isInteger(parsedMarcaId) || parsedMarcaId <= 0) {
       res.status(400).json({
-        message: "marcaId es obligatorio y debe ser un número entero positivo.",
+        message: 'marcaId es obligatorio y debe ser un número entero positivo.',
       });
       return;
     }
 
     // modelo es obligatorio y no puede ser vacío
-    if (typeof modelo !== "string" || modelo.trim() === "") {
+    if (typeof modelo !== 'string' || modelo.trim() === '') {
       res.status(400).json({
-        message: "El modelo del producto es obligatorio.",
+        message: 'El modelo del producto es obligatorio.',
       });
       return;
     }
@@ -60,7 +60,7 @@ export class ProductoMiddleware {
     const parsedPrecio = Number(precio);
     if (Number.isNaN(parsedPrecio) || parsedPrecio < 0) {
       res.status(400).json({
-        message: "El precio debe ser un número válido mayor o igual a 0.",
+        message: 'El precio debe ser un número válido mayor o igual a 0.',
       });
       return;
     }
@@ -69,7 +69,7 @@ export class ProductoMiddleware {
     const parsedStock = Number(stock);
     if (!Number.isInteger(parsedStock) || parsedStock < 0) {
       res.status(400).json({
-        message: "El stock debe ser un número entero mayor o igual a 0.",
+        message: 'El stock debe ser un número entero mayor o igual a 0.',
       });
       return;
     }
@@ -77,12 +77,12 @@ export class ProductoMiddleware {
     // especificaciones es opcional, pero si viene debe ser un objeto JSON válido
     if (especificaciones !== undefined) {
       if (
-        typeof especificaciones !== "object" ||
+        typeof especificaciones !== 'object' ||
         especificaciones === null ||
         Array.isArray(especificaciones)
       ) {
         res.status(400).json({
-          message: "especificaciones debe ser un objeto JSON válido.",
+          message: 'especificaciones debe ser un objeto JSON válido.',
         });
         return;
       }
@@ -108,7 +108,7 @@ export class ProductoMiddleware {
   static validateUpdateProduct(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): void {
     const { categoriaId, marcaId, modelo, precio, stock, especificaciones } =
       req.body;
@@ -118,7 +118,7 @@ export class ProductoMiddleware {
 
       if (!Number.isInteger(parsedCategoriaId) || parsedCategoriaId <= 0) {
         res.status(400).json({
-          message: "Si envías categoriaId, debe ser un número entero positivo.",
+          message: 'Si envías categoriaId, debe ser un número entero positivo.',
         });
         return;
       }
@@ -131,7 +131,7 @@ export class ProductoMiddleware {
 
       if (!Number.isInteger(parsedMarcaId) || parsedMarcaId <= 0) {
         res.status(400).json({
-          message: "Si envías marcaId, debe ser un número entero positivo.",
+          message: 'Si envías marcaId, debe ser un número entero positivo.',
         });
         return;
       }
@@ -140,9 +140,9 @@ export class ProductoMiddleware {
     }
 
     if (modelo !== undefined) {
-      if (typeof modelo !== "string" || modelo.trim() === "") {
+      if (typeof modelo !== 'string' || modelo.trim() === '') {
         res.status(400).json({
-          message: "Si envías modelo, debe ser un string no vacío.",
+          message: 'Si envías modelo, debe ser un string no vacío.',
         });
         return;
       }
@@ -156,7 +156,7 @@ export class ProductoMiddleware {
       if (Number.isNaN(parsedPrecio) || parsedPrecio < 0) {
         res.status(400).json({
           message:
-            "Si envías precio, debe ser un número válido mayor o igual a 0.",
+            'Si envías precio, debe ser un número válido mayor o igual a 0.',
         });
         return;
       }
@@ -170,7 +170,7 @@ export class ProductoMiddleware {
       if (!Number.isInteger(parsedStock) || parsedStock < 0) {
         res.status(400).json({
           message:
-            "Si envías stock, debe ser un número entero mayor o igual a 0.",
+            'Si envías stock, debe ser un número entero mayor o igual a 0.',
         });
         return;
       }
@@ -180,13 +180,13 @@ export class ProductoMiddleware {
 
     if (especificaciones !== undefined) {
       if (
-        typeof especificaciones !== "object" ||
+        typeof especificaciones !== 'object' ||
         especificaciones === null ||
         Array.isArray(especificaciones)
       ) {
         res.status(400).json({
           message:
-            "Si envías especificaciones, debe ser un objeto JSON válido.",
+            'Si envías especificaciones, debe ser un objeto JSON válido.',
         });
         return;
       }

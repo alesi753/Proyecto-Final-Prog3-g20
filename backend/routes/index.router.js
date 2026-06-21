@@ -7,7 +7,7 @@ router.get('/health', (req, res) => {
     status: 'OK',
     message: 'API funcionando correctamente',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
   });
 });
 
@@ -17,8 +17,8 @@ router.get('/test', (req, res) => {
     data: {
       backend: 'Express',
       database: 'PostgreSQL',
-      orm: 'Sequelize'
-    }
+      orm: 'Sequelize',
+    },
   });
 });
 

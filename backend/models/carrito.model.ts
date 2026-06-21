@@ -1,9 +1,9 @@
-import { sequelize } from "./index.model";
-import { DataTypes, Model, Optional } from "sequelize";
-import { InterfaceCarrito } from "../interfaces/carrito.interfaces";
+import { sequelize } from './index.model';
+import { DataTypes, Model, Optional } from 'sequelize';
+import { InterfaceCarrito } from '../interfaces/carrito.interfaces';
 
-type CarritoModelAttributes = Omit<InterfaceCarrito, "createdAt" | "updatedAt">;
-type CartCreationAttributes = Optional<CarritoModelAttributes, "id">;
+type CarritoModelAttributes = Omit<InterfaceCarrito, 'createdAt' | 'updatedAt'>;
+type CartCreationAttributes = Optional<CarritoModelAttributes, 'id'>;
 
 export class CarritoModel
   extends Model<CarritoModelAttributes, CartCreationAttributes>
@@ -23,7 +23,7 @@ export class CarritoModel
   }
 
   static async findCartByUserId(
-    usuarioId: number,
+    usuarioId: number
   ): Promise<CarritoModel | null> {
     return await CarritoModel.findOne({ where: { usuarioId } });
   }
@@ -32,14 +32,14 @@ export class CarritoModel
   // Se usa al confirmar la compra para procesar todo el contenido del carrito
   static async findCartByUserIdWithProducts(
     usuarioId: number,
-    transaction?: any,
+    transaction?: any
   ): Promise<CarritoModel | null> {
     return await CarritoModel.findOne({
       where: { usuarioId },
       include: [
         {
-          association: "productos", // Incluye los productos del carrito usando el alias definido en la relación entre CarritoModel y ProductoModel mediante CarritoItemModel en cardinalidades.model.ts
-          through: { attributes: ["cantidad"] }, // Incluye la cantidad de cada producto en el carrito desde la tabla intermedia CarritoItemModel
+          association: 'productos', // Incluye los productos del carrito usando el alias definido en la relación entre CarritoModel y ProductoModel mediante CarritoItemModel en cardinalidades.model.ts
+          through: { attributes: ['cantidad'] }, // Incluye la cantidad de cada producto en el carrito desde la tabla intermedia CarritoItemModel
         },
       ],
       transaction,
@@ -47,14 +47,14 @@ export class CarritoModel
   }
 
   static async createCart(
-    cartInput: CartCreationAttributes,
+    cartInput: CartCreationAttributes
   ): Promise<CarritoModel> {
     return await CarritoModel.create(cartInput);
   }
 
   static async updateCart(
     id: number,
-    updateData: Partial<CarritoModelAttributes>,
+    updateData: Partial<CarritoModelAttributes>
   ): Promise<CarritoModel | null> {
     const cart = await CarritoModel.findByPk(id);
     if (!cart) return null;
@@ -78,12 +78,12 @@ CarritoModel.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       unique: true,
-      references: { model: "usuarios", key: "id" },
+      references: { model: 'usuarios', key: 'id' },
     },
   },
   {
     sequelize,
-    tableName: "carritos",
+    tableName: 'carritos',
     timestamps: true,
-  },
+  }
 );

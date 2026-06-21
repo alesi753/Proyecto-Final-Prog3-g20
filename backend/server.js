@@ -9,23 +9,25 @@ if (process.env.NODE_ENV !== 'production') {
 
 require('dotenv').config();
 
-const express  = require('express');
-const helmet   = require('helmet');
-const cors     = require('cors');
-const morgan   = require('morgan');
+const express = require('express');
+const helmet = require('helmet');
+const cors = require('cors');
+const morgan = require('morgan');
 
 // Sequelize instance + model registration (also calls configurarCardinalidades)
 const { sequelize } = require('./models/index.model');
 
-const app  = express();
+const app = express();
 const PORT = process.env.PORT || 3001;
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 app.use(helmet());
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || '*',
+    credentials: true,
+  })
+);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -63,7 +65,9 @@ async function startServer() {
     console.log('Modelos sincronizados con la base de datos.');
 
     app.listen(PORT, () => {
-      console.log(`Servidor corriendo en el puerto ${PORT} [${process.env.NODE_ENV || 'development'}]`);
+      console.log(
+        `Servidor corriendo en el puerto ${PORT} [${process.env.NODE_ENV || 'development'}]`
+      );
     });
   } catch (error) {
     console.error('Error fatal al iniciar el servidor:', error);
@@ -85,4 +89,4 @@ const shutdown = async (signal) => {
 };
 
 process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT',  () => shutdown('SIGINT'));
+process.on('SIGINT', () => shutdown('SIGINT'));

@@ -1,26 +1,26 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 // Lista de estados válidos que puede tener una orden
 const validOrderStatuses = [
-  "pendiente",
-  "pagado",
-  "preparando",
-  "enviado",
-  "entregado",
-  "cancelado",
+  'pendiente',
+  'pagado',
+  'preparando',
+  'enviado',
+  'entregado',
+  'cancelado',
 ];
 
 // Valida que el id recibido por params exista y sea un número válido
 export const validateOrderIdParam = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const { id } = req.params;
 
   if (!id || isNaN(Number(id))) {
     res.status(400).json({
-      message: "El id de la orden debe ser un número válido.",
+      message: 'El id de la orden debe ser un número válido.',
     });
     return;
   }
@@ -32,20 +32,20 @@ export const validateOrderIdParam = (
 export const validateOrderStatus = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const { estado } = req.body;
 
   if (!estado) {
     res.status(400).json({
-      message: "El estado de la orden es obligatorio.",
+      message: 'El estado de la orden es obligatorio.',
     });
     return;
   }
 
   if (!validOrderStatuses.includes(estado)) {
     res.status(400).json({
-      message: "El estado de la orden no es válido.",
+      message: 'El estado de la orden no es válido.',
     });
     return;
   }

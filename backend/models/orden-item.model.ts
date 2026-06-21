@@ -1,12 +1,12 @@
-import { sequelize } from "./index.model";
-import { DataTypes, Model, Optional } from "sequelize";
-import { InterfaceOrdenItem } from "../interfaces/orden-item.interfaces";
+import { sequelize } from './index.model';
+import { DataTypes, Model, Optional } from 'sequelize';
+import { InterfaceOrdenItem } from '../interfaces/orden-item.interfaces';
 
 type OrdenItemModelAttributes = Omit<
   InterfaceOrdenItem,
-  "createdAt" | "updatedAt"
+  'createdAt' | 'updatedAt'
 >;
-type OrderItemCreationAttributes = Optional<OrdenItemModelAttributes, "id">;
+type OrderItemCreationAttributes = Optional<OrdenItemModelAttributes, 'id'>;
 
 export class OrderItemModel
   extends Model<OrdenItemModelAttributes, OrderItemCreationAttributes>
@@ -27,13 +27,13 @@ export class OrderItemModel
   }
 
   static async findOrderItemsByOrdenId(
-    ordenId: number,
+    ordenId: number
   ): Promise<OrderItemModel[]> {
     return await OrderItemModel.findAll({ where: { ordenId } });
   }
 
   static async createOrderItem(
-    orderItemInput: OrderItemCreationAttributes,
+    orderItemInput: OrderItemCreationAttributes
   ): Promise<OrderItemModel> {
     return await OrderItemModel.create(orderItemInput);
   }
@@ -42,14 +42,14 @@ export class OrderItemModel
   // Se usa al confirmar la compra para guardar todos los productos de la orden
   static async bulkCreateOrderItems(
     orderItemsInput: OrderItemCreationAttributes[],
-    transaction?: any,
+    transaction?: any
   ): Promise<OrderItemModel[]> {
     return await OrderItemModel.bulkCreate(orderItemsInput, { transaction });
   }
 
   static async updateOrderItem(
     id: number,
-    updateData: Partial<OrdenItemModelAttributes>,
+    updateData: Partial<OrdenItemModelAttributes>
   ): Promise<OrderItemModel | null> {
     const orderItem = await OrderItemModel.findByPk(id);
     if (!orderItem) return null;
@@ -68,26 +68,26 @@ OrderItemModel.init(
     ordenId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: "ordenes", key: "id" },
+      references: { model: 'ordenes', key: 'id' },
     },
     productoId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: "productos", key: "id" },
+      references: { model: 'productos', key: 'id' },
     },
     cantidad: { type: DataTypes.INTEGER, allowNull: false },
     precioAlComprar: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
   },
   {
     sequelize,
-    tableName: "orden_items",
+    tableName: 'orden_items',
     timestamps: false,
     indexes: [
       {
         unique: true,
-        fields: ["ordenId", "productoId"],
-        name: "idx_orden_producto_unique",
+        fields: ['ordenId', 'productoId'],
+        name: 'idx_orden_producto_unique',
       },
     ],
-  },
+  }
 );

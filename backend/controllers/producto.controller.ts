@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
-import { ProductoModel } from "../models/producto.model";
-import { CarritoItemModel } from "../models/carrito-item.model";
-import { OrderItemModel } from "../models/orden-item.model";
-import { CategoriaModel } from "../models/categoria.model";
-import { MarcaModel } from "../models/marca.model";
+import { Request, Response } from 'express';
+import { ProductoModel } from '../models/producto.model';
+import { CarritoItemModel } from '../models/carrito-item.model';
+import { OrderItemModel } from '../models/orden-item.model';
+import { CategoriaModel } from '../models/categoria.model';
+import { MarcaModel } from '../models/marca.model';
 
 export class ProductoController {
   // Obtiene todos los productos
@@ -13,9 +13,9 @@ export class ProductoController {
 
       res.status(200).json(productos);
     } catch (error) {
-      console.error("Error al obtener los productos:", error);
+      console.error('Error al obtener los productos:', error);
       res.status(500).json({
-        message: "Error interno al obtener los productos.",
+        message: 'Error interno al obtener los productos.',
       });
     }
   }
@@ -29,16 +29,16 @@ export class ProductoController {
 
       if (!producto) {
         res.status(404).json({
-          message: "Producto no encontrado.",
+          message: 'Producto no encontrado.',
         });
         return;
       }
 
       res.status(200).json(producto);
     } catch (error) {
-      console.error("Error al obtener el producto:", error);
+      console.error('Error al obtener el producto:', error);
       res.status(500).json({
-        message: "Error interno al obtener el producto.",
+        message: 'Error interno al obtener el producto.',
       });
     }
   }
@@ -54,7 +54,7 @@ export class ProductoController {
 
       if (!categoria) {
         res.status(404).json({
-          message: "La categoría especificada no existe.",
+          message: 'La categoría especificada no existe.',
         });
         return;
       }
@@ -64,7 +64,7 @@ export class ProductoController {
 
       if (!marca) {
         res.status(404).json({
-          message: "La marca especificada no existe.",
+          message: 'La marca especificada no existe.',
         });
         return;
       }
@@ -73,13 +73,13 @@ export class ProductoController {
       const nuevoProducto = await ProductoModel.createProduct(req.body);
 
       res.status(201).json({
-        message: "Producto creado con éxito.",
+        message: 'Producto creado con éxito.',
         data: nuevoProducto,
       });
     } catch (error) {
-      console.error("Error al crear el producto:", error);
+      console.error('Error al crear el producto:', error);
       res.status(500).json({
-        message: "Error interno al crear el producto.",
+        message: 'Error interno al crear el producto.',
       });
     }
   }
@@ -95,7 +95,7 @@ export class ProductoController {
 
       if (!producto) {
         res.status(404).json({
-          message: "El producto que intentas actualizar no existe.",
+          message: 'El producto que intentas actualizar no existe.',
         });
         return;
       }
@@ -103,12 +103,12 @@ export class ProductoController {
       // Si envían categoriaId, verificamos que la categoría exista
       if (req.body.categoriaId !== undefined) {
         const categoria = await CategoriaModel.findCategoryById(
-          req.body.categoriaId,
+          req.body.categoriaId
         );
 
         if (!categoria) {
           res.status(404).json({
-            message: "La categoría especificada no existe.",
+            message: 'La categoría especificada no existe.',
           });
           return;
         }
@@ -120,7 +120,7 @@ export class ProductoController {
 
         if (!marca) {
           res.status(404).json({
-            message: "La marca especificada no existe.",
+            message: 'La marca especificada no existe.',
           });
           return;
         }
@@ -129,17 +129,17 @@ export class ProductoController {
       // Si todo es válido, actualizamos el producto
       const productoActualizado = await ProductoModel.updateProduct(
         id,
-        req.body,
+        req.body
       );
 
       res.status(200).json({
-        message: "Producto actualizado con éxito.",
+        message: 'Producto actualizado con éxito.',
         data: productoActualizado,
       });
     } catch (error) {
-      console.error("Error al actualizar el producto:", error);
+      console.error('Error al actualizar el producto:', error);
       res.status(500).json({
-        message: "Error interno al actualizar el producto.",
+        message: 'Error interno al actualizar el producto.',
       });
     }
   }
@@ -155,7 +155,7 @@ export class ProductoController {
 
       if (!producto) {
         res.status(404).json({
-          message: "El producto que intentas eliminar no existe.",
+          message: 'El producto que intentas eliminar no existe.',
         });
         return;
       }
@@ -168,7 +168,7 @@ export class ProductoController {
       if (carritosAsociados > 0) {
         res.status(409).json({
           message:
-            "No se puede eliminar el producto porque está asociado a un carrito.",
+            'No se puede eliminar el producto porque está asociado a un carrito.',
         });
         return;
       }
@@ -181,7 +181,7 @@ export class ProductoController {
       if (ordenesAsociadas > 0) {
         res.status(409).json({
           message:
-            "No se puede eliminar el producto porque está asociado a una orden.",
+            'No se puede eliminar el producto porque está asociado a una orden.',
         });
         return;
       }
@@ -191,19 +191,18 @@ export class ProductoController {
 
       if (!eliminado) {
         res.status(500).json({
-          message: "No se pudo eliminar el producto.",
+          message: 'No se pudo eliminar el producto.',
         });
         return;
       }
 
       res.status(200).json({
-        message: "Producto eliminado con éxito.",
+        message: 'Producto eliminado con éxito.',
       });
-      
     } catch (error) {
-      console.error("Error al eliminar el producto:", error);
+      console.error('Error al eliminar el producto:', error);
       res.status(500).json({
-        message: "Error interno al eliminar el producto.",
+        message: 'Error interno al eliminar el producto.',
       });
     }
   }

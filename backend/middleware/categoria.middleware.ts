@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 export class CategoriaMiddleware {
   // Valida el parámetro :id de la ruta.
@@ -6,14 +6,14 @@ export class CategoriaMiddleware {
   static validateCategoryId(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): void {
     const id = Number(req.params.id);
 
     // Verificamos que el id sea un número válido y mayor a 0
     if (!Number.isInteger(id) || id <= 0) {
       res.status(400).json({
-        message: "El id de la categoría debe ser un número válido mayor a 0.",
+        message: 'El id de la categoría debe ser un número válido mayor a 0.',
       });
       return;
     }
@@ -25,14 +25,14 @@ export class CategoriaMiddleware {
   static validateCreateCategory(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): void {
     const { nombre, padreId } = req.body;
 
     // El nombre es obligatorio
-    if (typeof nombre !== "string" || nombre.trim() === "") {
+    if (typeof nombre !== 'string' || nombre.trim() === '') {
       res.status(400).json({
-        message: "El nombre de la categoría es obligatorio.",
+        message: 'El nombre de la categoría es obligatorio.',
       });
 
       return;
@@ -42,7 +42,7 @@ export class CategoriaMiddleware {
     if (nombre.trim().length > 100) {
       res.status(400).json({
         message:
-          "El nombre de la categoría no puede superar los 100 caracteres.",
+          'El nombre de la categoría no puede superar los 100 caracteres.',
       });
       return;
     }
@@ -53,7 +53,7 @@ export class CategoriaMiddleware {
 
       if (!Number.isInteger(parsedPadreId) || parsedPadreId <= 0) {
         res.status(400).json({
-          message: "padreId debe ser un número válido mayor a 0 o null.",
+          message: 'padreId debe ser un número válido mayor a 0 o null.',
         });
 
         return;
@@ -71,16 +71,16 @@ export class CategoriaMiddleware {
   static validateUpdateCategory(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): void {
     const { nombre, padreId } = req.body;
     const categoryId = Number(req.params.id);
 
     // Si viene nombre, validamos que sea string no vacío
     if (nombre !== undefined) {
-      if (typeof nombre !== "string" || nombre.trim() === "") {
+      if (typeof nombre !== 'string' || nombre.trim() === '') {
         res.status(400).json({
-          message: "Si envías nombre, debe ser un string no vacío.",
+          message: 'Si envías nombre, debe ser un string no vacío.',
         });
         return;
       }
@@ -89,7 +89,7 @@ export class CategoriaMiddleware {
       if (nombre.trim().length > 100) {
         res.status(400).json({
           message:
-            "El nombre de la categoría no puede superar los 100 caracteres.",
+            'El nombre de la categoría no puede superar los 100 caracteres.',
         });
         return;
       }
@@ -105,7 +105,7 @@ export class CategoriaMiddleware {
       if (!Number.isInteger(parsedPadreId) || parsedPadreId <= 0) {
         res.status(400).json({
           message:
-            "Si envías padreId, debe ser un número válido mayor a 0 o null.",
+            'Si envías padreId, debe ser un número válido mayor a 0 o null.',
         });
         return;
       }
@@ -113,7 +113,7 @@ export class CategoriaMiddleware {
       // Evitamos que una categoría sea su propia categoría padre
       if (parsedPadreId === categoryId) {
         res.status(400).json({
-          message: "Una categoría no puede ser su propia categoría padre.",
+          message: 'Una categoría no puede ser su propia categoría padre.',
         });
         return;
       }

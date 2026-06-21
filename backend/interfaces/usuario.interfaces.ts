@@ -1,4 +1,3 @@
-
 // Extraemos el ENUM a un tipo para poder reutilizarlo
 export type RolUsuario = 'cliente' | 'admin';
 

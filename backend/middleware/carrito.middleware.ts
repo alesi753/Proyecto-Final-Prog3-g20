@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 export class CarritoMiddleware {
   static validateAgregarItem(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): void {
     const { productoId, cantidad } = req.body;
 
@@ -13,14 +13,14 @@ export class CarritoMiddleware {
 
     if (!Number.isInteger(parsedProductoId) || parsedProductoId <= 0) {
       res.status(400).json({
-        message: "productoId debe ser un número entero positivo.",
+        message: 'productoId debe ser un número entero positivo.',
       });
       return;
     }
 
     if (!Number.isInteger(parsedCantidad) || parsedCantidad <= 0) {
       res.status(400).json({
-        message: "cantidad debe ser un número entero positivo.",
+        message: 'cantidad debe ser un número entero positivo.',
       });
       return;
     }
@@ -34,13 +34,13 @@ export class CarritoMiddleware {
   static validateProductoIdParam(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): void {
     const productoId = Number(req.params.productoId);
 
     if (!Number.isInteger(productoId) || productoId <= 0) {
       res.status(400).json({
-        message: "El productoId debe ser un número entero positivo.",
+        message: 'El productoId debe ser un número entero positivo.',
       });
       return;
     }

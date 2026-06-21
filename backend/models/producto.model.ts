@@ -1,12 +1,12 @@
-import { sequelize } from "./index.model";
-import { DataTypes, Model, Optional } from "sequelize";
-import { InterfaceProducto } from "../interfaces/producto.interfaces";
+import { sequelize } from './index.model';
+import { DataTypes, Model, Optional } from 'sequelize';
+import { InterfaceProducto } from '../interfaces/producto.interfaces';
 
 type ProductoModelAttributes = Omit<
   InterfaceProducto,
-  "createdAt" | "updatedAt"
+  'createdAt' | 'updatedAt'
 >;
-type ProductCreationAttributes = Optional<ProductoModelAttributes, "id">;
+type ProductCreationAttributes = Optional<ProductoModelAttributes, 'id'>;
 
 export class ProductoModel
   extends Model<ProductoModelAttributes, ProductCreationAttributes>
@@ -28,20 +28,20 @@ export class ProductoModel
   // Permite recibir una transacción para usarla en operaciones más grande
   static async findProductById(
     id: number,
-    transaction?: any,
+    transaction?: any
   ): Promise<ProductoModel | null> {
     return await ProductoModel.findByPk(id, { transaction });
   }
 
   static async createProduct(
-    productInput: ProductCreationAttributes,
+    productInput: ProductCreationAttributes
   ): Promise<ProductoModel> {
     return await ProductoModel.create(productInput);
   }
 
   static async updateProduct(
     id: number,
-    updateData: Partial<ProductoModelAttributes>,
+    updateData: Partial<ProductoModelAttributes>
   ): Promise<ProductoModel | null> {
     const product = await ProductoModel.findByPk(id);
     if (!product) return null;
@@ -53,7 +53,7 @@ export class ProductoModel
   static async updateProductStock(
     id: number,
     newStock: number,
-    transaction?: any,
+    transaction?: any
   ): Promise<ProductoModel | null> {
     const product = await ProductoModel.findByPk(id, { transaction });
 
@@ -80,12 +80,12 @@ ProductoModel.init(
     categoriaId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: "categorias", key: "id" },
+      references: { model: 'categorias', key: 'id' },
     },
     marcaId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: "marcas", key: "id" },
+      references: { model: 'marcas', key: 'id' },
     },
     modelo: { type: DataTypes.STRING(255), allowNull: false },
     precio: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
@@ -98,7 +98,7 @@ ProductoModel.init(
   },
   {
     sequelize,
-    tableName: "productos",
+    tableName: 'productos',
     timestamps: false,
-  },
+  }
 );

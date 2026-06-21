@@ -1,11 +1,11 @@
-import { sequelize } from "./index.model";
-import { DataTypes, Model, Optional } from "sequelize";
-import { InterfaceCategoria } from "../interfaces/categoria.interfaces";
+import { sequelize } from './index.model';
+import { DataTypes, Model, Optional } from 'sequelize';
+import { InterfaceCategoria } from '../interfaces/categoria.interfaces';
 
-type InputCategoria = Omit<InterfaceCategoria, "id">;
+type InputCategoria = Omit<InterfaceCategoria, 'id'>;
 interface CategoriaCreationAttributes extends Optional<
   InterfaceCategoria,
-  "id"
+  'id'
 > {}
 
 export class CategoriaModel
@@ -25,14 +25,14 @@ export class CategoriaModel
   }
 
   static async createCategory(
-    categoriaInput: InputCategoria,
+    categoriaInput: InputCategoria
   ): Promise<CategoriaModel> {
     return await CategoriaModel.create(categoriaInput);
   }
 
   static async updateCategory(
     id: number,
-    updateData: Partial<InputCategoria>,
+    updateData: Partial<InputCategoria>
   ): Promise<CategoriaModel | null> {
     const categoria = await CategoriaModel.findByPk(id);
     if (!categoria) return null;
@@ -52,12 +52,12 @@ CategoriaModel.init(
     padreId: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      references: { model: "categorias", key: "id" },
+      references: { model: 'categorias', key: 'id' },
     },
   },
   {
     sequelize,
-    tableName: "categorias",
+    tableName: 'categorias',
     timestamps: false,
-  },
+  }
 );
