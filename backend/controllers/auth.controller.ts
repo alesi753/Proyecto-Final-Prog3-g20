@@ -6,14 +6,16 @@ export class AuthController {
   // Método para registrar usuario
   public static async register(req: Request, res: Response): Promise<Response> {
     try {
-      const { nombre, apellido, correo, password, rol } = req.body;
+      
+      const { nombre, apellido, correo, password } = req.body;
 
       const newUser = await UsuarioModel.createUser({
         nombre: nombre,
         apellido: apellido,
         correo: correo,
         password: password,
-        rol: rol,
+        // Forzamos estrictamente el rol por defecto
+        rol: 'cliente', 
       });
 
       const userResponse = {
