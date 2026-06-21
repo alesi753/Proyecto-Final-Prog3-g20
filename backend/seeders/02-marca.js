@@ -14,60 +14,64 @@
 
 module.exports = {
   async up(queryInterface) {
-    await queryInterface.bulkInsert('marcas', [
-      // CPU / GPU
-      { nombre: 'AMD' },
-      { nombre: 'Intel' },
-      { nombre: 'NVIDIA' },
+    await queryInterface.bulkInsert(
+      'marcas',
+      [
+        // CPU / GPU
+        { nombre: 'AMD' },
+        { nombre: 'Intel' },
+        { nombre: 'NVIDIA' },
 
-      // Motherboards / GPUs / monitores
-      { nombre: 'ASUS' },
-      { nombre: 'Gigabyte' },
-      { nombre: 'MSI' },
-      { nombre: 'ASRock' },
-      { nombre: 'Biostar' },
-      { nombre: 'EVGA' },
-      { nombre: 'Zotac' },
-      { nombre: 'Sapphire' },
+        // Motherboards / GPUs / monitores
+        { nombre: 'ASUS' },
+        { nombre: 'Gigabyte' },
+        { nombre: 'MSI' },
+        { nombre: 'ASRock' },
+        { nombre: 'Biostar' },
+        { nombre: 'EVGA' },
+        { nombre: 'Zotac' },
+        { nombre: 'Sapphire' },
 
-      // Memoria RAM / almacenamiento
-      { nombre: 'Corsair' },
-      { nombre: 'Kingston' },
-      { nombre: 'Crucial' },
-      { nombre: 'G.Skill' },
-      { nombre: 'ADATA' },
-      { nombre: 'Samsung' },
-      { nombre: 'Western Digital' },
-      { nombre: 'Seagate' },
+        // Memoria RAM / almacenamiento
+        { nombre: 'Corsair' },
+        { nombre: 'Kingston' },
+        { nombre: 'Crucial' },
+        { nombre: 'G.Skill' },
+        { nombre: 'ADATA' },
+        { nombre: 'Samsung' },
+        { nombre: 'Western Digital' },
+        { nombre: 'Seagate' },
 
-      // Fuentes / gabinetes / refrigeración
-      { nombre: 'Seasonic' },
-      { nombre: 'Thermaltake' },
-      { nombre: 'Cooler Master' },
-      { nombre: 'NZXT' },
-      { nombre: 'be quiet!' },
-      { nombre: 'Noctua' },
-      { nombre: 'Lian Li' },
-      { nombre: 'Deepcool' },
+        // Fuentes / gabinetes / refrigeración
+        { nombre: 'Seasonic' },
+        { nombre: 'Thermaltake' },
+        { nombre: 'Cooler Master' },
+        { nombre: 'NZXT' },
+        { nombre: 'be quiet!' },
+        { nombre: 'Noctua' },
+        { nombre: 'Lian Li' },
+        { nombre: 'Deepcool' },
 
-      // Monitores
-      { nombre: 'LG' },
-      { nombre: 'Acer' },
-      { nombre: 'AOC' },
-      { nombre: 'BenQ' },
-      { nombre: 'ViewSonic' },
+        // Monitores
+        { nombre: 'LG' },
+        { nombre: 'Acer' },
+        { nombre: 'AOC' },
+        { nombre: 'BenQ' },
+        { nombre: 'ViewSonic' },
 
-      // Periféricos
-      { nombre: 'Logitech' },
-      { nombre: 'Razer' },
-      { nombre: 'HyperX' },
-      { nombre: 'SteelSeries' },
-      { nombre: 'Redragon' },
+        // Periféricos
+        { nombre: 'Logitech' },
+        { nombre: 'Razer' },
+        { nombre: 'HyperX' },
+        { nombre: 'SteelSeries' },
+        { nombre: 'Redragon' },
 
-      // Conectividad
-      { nombre: 'TP-Link' },
-      { nombre: 'Realtek' },
-    ], {});
+        // Conectividad
+        { nombre: 'TP-Link' },
+        { nombre: 'Realtek' },
+      ],
+      {}
+    );
   },
 
   async down(queryInterface) {

@@ -1,8 +1,12 @@
-
 // 'estado' goes through a closed cycle: pendiente → pagado → preparando → enviado → entregado
 //                                                                                 ↘ cancelado
-export type EstadoOrden = 'pendiente' | 'pagado' | 'preparando' | 'enviado' | 'entregado' | 'cancelado';
-
+export type EstadoOrden =
+  | 'pendiente'
+  | 'pagado'
+  | 'preparando'
+  | 'enviado'
+  | 'entregado'
+  | 'cancelado';
 
 export interface InterfaceOrden {
   id: number;

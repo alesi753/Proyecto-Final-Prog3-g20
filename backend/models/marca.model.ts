@@ -3,11 +3,12 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import { InterfaceMarca } from '../interfaces/marca.interfaces';
 
 type InputMarca = Omit<InterfaceMarca, 'id'>;
-interface MarcaCreationAttributes extends Optional<InterfaceMarca, 'id'> { }
+interface MarcaCreationAttributes extends Optional<InterfaceMarca, 'id'> {}
 
 export class MarcaModel
   extends Model<InterfaceMarca, MarcaCreationAttributes>
-  implements InterfaceMarca {
+  implements InterfaceMarca
+{
   declare id: number;
   declare nombre: string;
 
@@ -23,7 +24,10 @@ export class MarcaModel
     return await MarcaModel.create(input);
   }
 
-  static async updateMarca(id: number, updateData: Partial<InputMarca>): Promise<MarcaModel | null> {
+  static async updateMarca(
+    id: number,
+    updateData: Partial<InputMarca>
+  ): Promise<MarcaModel | null> {
     const marca = await MarcaModel.findByPk(id);
     if (!marca) return null;
     return await marca.update(updateData);
@@ -38,12 +42,11 @@ export class MarcaModel
 MarcaModel.init(
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    nombre: { type: DataTypes.STRING(100), allowNull: false, unique: true }
+    nombre: { type: DataTypes.STRING(100), allowNull: false, unique: true },
   },
   {
     sequelize,
     tableName: 'marcas',
-    timestamps: false
+    timestamps: false,
   }
 );
-

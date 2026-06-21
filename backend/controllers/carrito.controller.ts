@@ -1,20 +1,17 @@
-import { Response } from "express";
-import { CarritoModel } from "../models/carrito.model";
-import { CarritoItemModel } from "../models/carrito-item.model";
-import { ProductoModel } from "../models/producto.model";
-import { AuthRequest } from "../middleware/auth.middleware";
+import { Response } from 'express';
+import { CarritoModel } from '../models/carrito.model';
+import { CarritoItemModel } from '../models/carrito-item.model';
+import { ProductoModel } from '../models/producto.model';
+import { AuthRequest } from '../middleware/auth.middleware';
 
 export class CarritoController {
   // Obtiene el carrito actual del usuario autenticado con sus productos
   // Se asume que AuthMiddleware ya validó el token
-  static async obtenerCarrito(
-    req: AuthRequest,
-    res: Response,
-  ): Promise<void> {
+  static async obtenerCarrito(req: AuthRequest, res: Response): Promise<void> {
     try {
       // Verificamos que el usuario esté autenticado
       if (!req.user) {
-        res.status(401).json({ message: "Usuario no autenticado." });
+        res.status(401).json({ message: 'Usuario no autenticado.' });
         return;
       }
 
@@ -33,9 +30,9 @@ export class CarritoController {
 
       res.status(200).json(carritoConProductos);
     } catch (error) {
-      console.error("Error al obtener el carrito:", error);
+      console.error('Error al obtener el carrito:', error);
       res.status(500).json({
-        message: "Error interno al obtener el carrito.",
+        message: 'Error interno al obtener el carrito.',
       });
     }
   }
@@ -46,7 +43,7 @@ export class CarritoController {
     try {
       // Verificamos que el usuario esté autenticado
       if (!req.user) {
-        res.status(401).json({ message: "Usuario no autenticado." });
+        res.status(401).json({ message: 'Usuario no autenticado.' });
         return;
       }
 
@@ -57,7 +54,7 @@ export class CarritoController {
       const producto = await ProductoModel.findProductById(productoId);
 
       if (!producto) {
-        res.status(404).json({ message: "Producto no encontrado." });
+        res.status(404).json({ message: 'Producto no encontrado.' });
         return;
       }
 
@@ -79,7 +76,7 @@ export class CarritoController {
       // Verificamos si el producto ya está en el carrito
       const itemExistente = await CarritoItemModel.findCartItemByCartAndProduct(
         carrito.id,
-        productoId,
+        productoId
       );
 
       // Si ya existe, calculamos la nueva cantidad
@@ -89,7 +86,7 @@ export class CarritoController {
         // Validamos que la nueva cantidad no supere el stock
         if (producto.stock < nuevaCantidad) {
           res.status(409).json({
-            message: "La cantidad total solicitada supera el stock disponible.",
+            message: 'La cantidad total solicitada supera el stock disponible.',
           });
           return;
         }
@@ -108,12 +105,12 @@ export class CarritoController {
       }
 
       res.status(200).json({
-        message: "Producto agregado al carrito con éxito.",
+        message: 'Producto agregado al carrito con éxito.',
       });
     } catch (error) {
-      console.error("Error al agregar item al carrito:", error);
+      console.error('Error al agregar item al carrito:', error);
       res.status(500).json({
-        message: "Error interno al agregar el producto al carrito.",
+        message: 'Error interno al agregar el producto al carrito.',
       });
     }
   }
@@ -124,7 +121,7 @@ export class CarritoController {
     try {
       // Verificamos que el usuario esté autenticado
       if (!req.user) {
-        res.status(401).json({ message: "Usuario no autenticado." });
+        res.status(401).json({ message: 'Usuario no autenticado.' });
         return;
       }
 
@@ -135,19 +132,19 @@ export class CarritoController {
       const carrito = await CarritoModel.findCartByUserId(usuarioId);
 
       if (!carrito) {
-        res.status(404).json({ message: "Carrito no encontrado." });
+        res.status(404).json({ message: 'Carrito no encontrado.' });
         return;
       }
 
       // Verificamos que el producto esté en el carrito
       const item = await CarritoItemModel.findCartItemByCartAndProduct(
         carrito.id,
-        productoId,
+        productoId
       );
 
       if (!item) {
         res.status(404).json({
-          message: "El producto no se encuentra en el carrito.",
+          message: 'El producto no se encuentra en el carrito.',
         });
         return;
       }
@@ -155,16 +152,16 @@ export class CarritoController {
       // Eliminamos el item del carrito
       await CarritoItemModel.deleteCartItemByCartAndProduct(
         carrito.id,
-        productoId,
+        productoId
       );
 
       res.status(200).json({
-        message: "Producto eliminado del carrito con éxito.",
+        message: 'Producto eliminado del carrito con éxito.',
       });
     } catch (error) {
-      console.error("Error al eliminar item del carrito:", error);
+      console.error('Error al eliminar item del carrito:', error);
       res.status(500).json({
-        message: "Error interno al eliminar el producto del carrito.",
+        message: 'Error interno al eliminar el producto del carrito.',
       });
     }
   }

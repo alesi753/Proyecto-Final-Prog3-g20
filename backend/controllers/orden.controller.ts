@@ -1,11 +1,11 @@
-import { Response } from "express";
-import { sequelize } from "../models/index.model";
-import { OrdenModel } from "../models/orden.model";
-import { OrderItemModel } from "../models/orden-item.model";
-import { ProductoModel } from "../models/producto.model";
-import { CarritoModel } from "../models/carrito.model";
-import { CarritoItemModel } from "../models/carrito-item.model";
-import { AuthRequest } from "../middleware/auth.middleware";
+import { Response } from 'express';
+import { sequelize } from '../models/index.model';
+import { OrdenModel } from '../models/orden.model';
+import { OrderItemModel } from '../models/orden-item.model';
+import { ProductoModel } from '../models/producto.model';
+import { CarritoModel } from '../models/carrito.model';
+import { CarritoItemModel } from '../models/carrito-item.model';
+import { AuthRequest } from '../middleware/auth.middleware';
 
 export class OrdenController {
   // Procesa la compra del usuario autenticado a partir de los productos que tiene en su carrito
@@ -13,7 +13,7 @@ export class OrdenController {
   static async procesarCheckout(req: AuthRequest, res: Response) {
     // Verifica que haya un usuario autenticado antes de iniciar la transacción
     if (!req.user) {
-      res.status(401).json({ message: "Acceso denegado." });
+      res.status(401).json({ message: 'Acceso denegado.' });
       return;
     }
 
@@ -25,13 +25,13 @@ export class OrdenController {
       // Busca el carrito del usuario incluyendo los productos que contiene
       const carrito: any = await CarritoModel.findCartByUserIdWithProducts(
         usuarioId,
-        t,
+        t
       );
 
       // Verifica que el carrito exista y tenga productos para comprar
       if (!carrito || !carrito.productos || carrito.productos.length === 0) {
         await t.rollback();
-        res.status(400).json({ message: "El carrito está vacío." });
+        res.status(400).json({ message: 'El carrito está vacío.' });
         return;
       }
 
@@ -99,9 +99,9 @@ export class OrdenController {
         {
           usuarioId,
           precioTotal: totalOrden,
-          estado: "pendiente",
+          estado: 'pendiente',
         },
-        t,
+        t
       );
 
       // Agrega el id de la nueva orden a cada item procesado
@@ -117,20 +117,20 @@ export class OrdenController {
       for (const item of itemsProcesados) {
         const producto = await ProductoModel.findProductById(
           item.productoId,
-          t,
+          t
         );
 
         // Verifica que el producto siga existiendo antes de actualizarlo
         if (!producto) {
           await t.rollback();
-          res.status(404).json({ message: "Producto no encontrado." });
+          res.status(404).json({ message: 'Producto no encontrado.' });
           return;
         }
 
         await ProductoModel.updateProductStock(
           item.productoId,
           producto.stock - item.cantidad,
-          t,
+          t
         );
       }
 
@@ -141,14 +141,14 @@ export class OrdenController {
       await t.commit();
 
       res.status(201).json({
-        message: "Compra realizada con éxito.",
+        message: 'Compra realizada con éxito.',
         orden: nuevaOrden,
       });
     } catch (error) {
       // Revierte todos los cambios si ocurre cualquier error durante el proceso de compra
       await t.rollback();
-      console.error("Error al procesar la compra:", error);
-      res.status(500).json({ message: "Error interno del servidor." });
+      console.error('Error al procesar la compra:', error);
+      res.status(500).json({ message: 'Error interno del servidor.' });
     }
   }
 
@@ -157,7 +157,7 @@ export class OrdenController {
     try {
       // Verifica que haya un usuario autenticado
       if (!req.user) {
-        res.status(401).json({ message: "Acceso denegado." });
+        res.status(401).json({ message: 'Acceso denegado.' });
         return;
       }
 
@@ -169,8 +169,8 @@ export class OrdenController {
 
       res.status(200).json({ ordenes });
     } catch (error) {
-      console.error("Error al obtener el historial de órdenes:", error);
-      res.status(500).json({ message: "Error interno del servidor." });
+      console.error('Error al obtener el historial de órdenes:', error);
+      res.status(500).json({ message: 'Error interno del servidor.' });
     }
   }
 }

@@ -7,11 +7,31 @@ const router = Router();
 
 // Público
 router.get('/', CategoriaController.getAllCategories);
-router.get('/:id', CategoriaMiddleware.validateCategoryId, CategoriaController.getCategoryById);
+router.get(
+  '/:id',
+  CategoriaMiddleware.validateCategoryId,
+  CategoriaController.getCategoryById
+);
 
 // Protegido
-router.post('/', AuthMiddleware.verificarToken, CategoriaMiddleware.validateCreateCategory, CategoriaController.createCategory);
-router.put('/:id', AuthMiddleware.verificarToken, CategoriaMiddleware.validateCategoryId, CategoriaMiddleware.validateUpdateCategory, CategoriaController.updateCategory);
-router.delete('/:id', AuthMiddleware.verificarToken, CategoriaMiddleware.validateCategoryId, CategoriaController.deleteCategory);
+router.post(
+  '/',
+  AuthMiddleware.verificarToken,
+  CategoriaMiddleware.validateCreateCategory,
+  CategoriaController.createCategory
+);
+router.put(
+  '/:id',
+  AuthMiddleware.verificarToken,
+  CategoriaMiddleware.validateCategoryId,
+  CategoriaMiddleware.validateUpdateCategory,
+  CategoriaController.updateCategory
+);
+router.delete(
+  '/:id',
+  AuthMiddleware.verificarToken,
+  CategoriaMiddleware.validateCategoryId,
+  CategoriaController.deleteCategory
+);
 
 module.exports = router;

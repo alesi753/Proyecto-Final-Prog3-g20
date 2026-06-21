@@ -12,9 +12,17 @@ router.use(AuthMiddleware.verificarToken);
 router.get('/', CarritoController.obtenerCarrito);
 
 // POST /api/carrito/agregar
-router.post('/agregar', CarritoMiddleware.validateAgregarItem, CarritoController.agregarItem);
+router.post(
+  '/agregar',
+  CarritoMiddleware.validateAgregarItem,
+  CarritoController.agregarItem
+);
 
 // DELETE /api/carrito/remover/:productoId
-router.delete('/remover/:productoId', CarritoMiddleware.validateProductoIdParam, CarritoController.eliminarItem);
+router.delete(
+  '/remover/:productoId',
+  CarritoMiddleware.validateProductoIdParam,
+  CarritoController.eliminarItem
+);
 
 module.exports = router;

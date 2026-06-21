@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 export class UsuarioMiddleware {
   // Valida el parámetro :id de la ruta
@@ -7,7 +7,7 @@ export class UsuarioMiddleware {
 
     if (!Number.isInteger(id) || id <= 0) {
       res.status(400).json({
-        message: "El id del usuario debe ser un número entero positivo.",
+        message: 'El id del usuario debe ser un número entero positivo.',
       });
       return;
     }
@@ -19,27 +19,27 @@ export class UsuarioMiddleware {
   static validateCreateUser(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): void {
     const { nombre, apellido, correo, password, rol } = req.body;
 
-    if (typeof nombre !== "string" || nombre.trim() === "") {
+    if (typeof nombre !== 'string' || nombre.trim() === '') {
       res.status(400).json({
-        message: "El nombre es obligatorio.",
+        message: 'El nombre es obligatorio.',
       });
       return;
     }
 
-    if (typeof apellido !== "string" || apellido.trim() === "") {
+    if (typeof apellido !== 'string' || apellido.trim() === '') {
       res.status(400).json({
-        message: "El apellido es obligatorio.",
+        message: 'El apellido es obligatorio.',
       });
       return;
     }
 
-    if (typeof correo !== "string" || correo.trim() === "") {
+    if (typeof correo !== 'string' || correo.trim() === '') {
       res.status(400).json({
-        message: "El correo es obligatorio.",
+        message: 'El correo es obligatorio.',
       });
       return;
     }
@@ -47,19 +47,19 @@ export class UsuarioMiddleware {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(correo.trim())) {
       res.status(400).json({
-        message: "El correo debe tener un formato válido.",
+        message: 'El correo debe tener un formato válido.',
       });
       return;
     }
 
-    if (typeof password !== "string" || password.trim() === "") {
+    if (typeof password !== 'string' || password.trim() === '') {
       res.status(400).json({
-        message: "La contraseña es obligatoria.",
+        message: 'La contraseña es obligatoria.',
       });
       return;
     }
 
-    if (rol !== "cliente" && rol !== "admin") {
+    if (rol !== 'cliente' && rol !== 'admin') {
       res.status(400).json({
         message: "El rol debe ser 'cliente' o 'admin'.",
       });
@@ -78,14 +78,14 @@ export class UsuarioMiddleware {
   static validateUpdateUser(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): void {
     const { nombre, apellido, correo, password, rol } = req.body;
 
     if (nombre !== undefined) {
-      if (typeof nombre !== "string" || nombre.trim() === "") {
+      if (typeof nombre !== 'string' || nombre.trim() === '') {
         res.status(400).json({
-          message: "Si envías nombre, debe ser un string no vacío.",
+          message: 'Si envías nombre, debe ser un string no vacío.',
         });
         return;
       }
@@ -94,9 +94,9 @@ export class UsuarioMiddleware {
     }
 
     if (apellido !== undefined) {
-      if (typeof apellido !== "string" || apellido.trim() === "") {
+      if (typeof apellido !== 'string' || apellido.trim() === '') {
         res.status(400).json({
-          message: "Si envías apellido, debe ser un string no vacío.",
+          message: 'Si envías apellido, debe ser un string no vacío.',
         });
         return;
       }
@@ -105,9 +105,9 @@ export class UsuarioMiddleware {
     }
 
     if (correo !== undefined) {
-      if (typeof correo !== "string" || correo.trim() === "") {
+      if (typeof correo !== 'string' || correo.trim() === '') {
         res.status(400).json({
-          message: "Si envías correo, debe ser un string no vacío.",
+          message: 'Si envías correo, debe ser un string no vacío.',
         });
         return;
       }
@@ -115,7 +115,7 @@ export class UsuarioMiddleware {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(correo.trim())) {
         res.status(400).json({
-          message: "Si envías correo, debe tener un formato válido.",
+          message: 'Si envías correo, debe tener un formato válido.',
         });
         return;
       }
@@ -124,9 +124,9 @@ export class UsuarioMiddleware {
     }
 
     if (password !== undefined) {
-      if (typeof password !== "string" || password.trim() === "") {
+      if (typeof password !== 'string' || password.trim() === '') {
         res.status(400).json({
-          message: "Si envías password, debe ser un string no vacío.",
+          message: 'Si envías password, debe ser un string no vacío.',
         });
         return;
       }
@@ -135,7 +135,7 @@ export class UsuarioMiddleware {
     }
 
     if (rol !== undefined) {
-      if (rol !== "cliente" && rol !== "admin") {
+      if (rol !== 'cliente' && rol !== 'admin') {
         res.status(400).json({
           message: "Si envías rol, debe ser 'cliente' o 'admin'.",
         });
