@@ -1,0 +1,209 @@
+.step {
+  min-width: 0;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+
+.title {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 48px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 0 0 30px;
+}
+
+/* Compatibility note: surfaces the constraint applied to the list. Pulled up to
+   sit just under the title, which keeps its 30px bottom margin for filterless rows. */
+.subtitle {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--accent, var(--muted));
+  margin: -20px 0 26px;
+}
+
+/* ── Selection tray (multi steps) ── */
+.tray {
+  margin-bottom: 24px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface);
+}
+
+.trayHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.trayCount {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.trayEmpty {
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.trayItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+}
+
+.trayName {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-head);
+  font-size: 15px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trayPrice {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+}
+
+.trayRemove {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+
+.trayRemove:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+/* ── Filter chips ── */
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 11px 28px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.chipActive {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+}
+
+/* ── Product list ── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: border-color 0.12s, background 0.12s;
+}
+
+.rowActive {
+  border-color: var(--accent);
+  background: var(--alt);
+}
+
+/* ── Bottom navigation ── */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.backBtn {
+  font-family: var(--font-head);
+  font-weight: 500;
+  font-size: 15px;
+  padding: 14px 28px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.continueBtn {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 15px;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 3px;
+  transition: opacity 0.12s;
+}
+
+.continueBtnActive {
+  background: var(--accent);
+  color: var(--on-accent);
+  cursor: pointer;
+}
+
+.continueBtnActive:hover {
+  opacity: 0.85;
+}
+
+.continueBtnDisabled {
+  background: var(--alt);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+/* Loading / empty states */
+.status {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--muted);
+  padding: 40px 0;
+}

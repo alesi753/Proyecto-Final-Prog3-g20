@@ -1,19 +1,32 @@
-import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from './context/AuthContext';
+import Navbar from './components/layout/Navbar';
+import Home from './pages/Home';
+import Builder from './pages/Builder';
+import Login from './pages/Login';
+import Carrito from './pages/Carrito';
 import './App.css';
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>¡Bienvenido a tu nueva aplicación!</h1>
-        <p>Frontend React funcionando correctamente</p>
-        <p>
-          <a href="/api/health" target="_blank" rel="noopener noreferrer">
-            Verificar estado de la API
-          </a>
-        </p>
-      </header>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route path="/"        element={<Home />} />
+            <Route path="/builder" element={<Builder />} />
+            <Route path="/login"   element={<Login />} />
+            <Route path="/carrito" element={<Carrito />} />
+          </Routes>
+          <Toaster position="bottom-right" />
+        </BrowserRouter>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

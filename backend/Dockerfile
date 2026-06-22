@@ -2,15 +2,22 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Instalar dependencias
+# Install all deps (devDeps needed for tsc compilation)
 COPY package*.json ./
 RUN npm install
 
-# Copiar código fuente
+# Copy source
 COPY . .
 
-# Exponer puerto
+# Compile TypeScript → JavaScript in-place (no outDir, so .ts and .js co-exist).
+# After this step every require('../models/index.model') resolves to the compiled .js.
+RUN npx tsc
+
+# Remove devDeps — ts-node / typescript no longer needed at runtime
+RUN npm prune --production
+
+ENV NODE_ENV=production
+
 EXPOSE 3001
 
-# Comando por defecto
-CMD ["npm", "run", "dev"]
+CMD ["node", "dist/server.js"]
