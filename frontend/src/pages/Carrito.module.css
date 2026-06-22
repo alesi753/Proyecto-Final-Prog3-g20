@@ -1,0 +1,121 @@
+.page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 44px 32px 110px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.title {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 44px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 0 0 30px;
+}
+
+.list {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.total {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.totalLabel {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text);
+}
+
+.totalValue {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 30px;
+  color: var(--text);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.clear {
+  font-family: var(--font-head);
+  font-weight: 500;
+  font-size: 15px;
+  padding: 14px 22px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.clear:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+.clear:disabled { opacity: 0.5; cursor: default; }
+
+.buy {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 17px;
+  padding: 15px 34px;
+  border: none;
+  border-radius: 4px;
+  background: var(--accent);
+  color: var(--on-accent);
+  cursor: pointer;
+  transition: opacity 0.12s;
+}
+
+.buy:hover:not(:disabled) { opacity: 0.88; }
+.buy:disabled { opacity: 0.5; cursor: default; }
+
+.empty {
+  padding: 48px 0;
+}
+
+.emptyText {
+  font-family: var(--font-head);
+  font-size: 17px;
+  color: var(--muted);
+  margin: 0 0 20px;
+}
+
+.cta {
+  display: inline-block;
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 16px;
+  padding: 13px 26px;
+  border-radius: 4px;
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.cta:hover { opacity: 0.88; }
