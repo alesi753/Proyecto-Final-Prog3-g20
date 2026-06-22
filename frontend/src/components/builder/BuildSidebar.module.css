@@ -1,0 +1,156 @@
+.sidebar {
+  position: sticky;
+  top: 90px;
+  padding: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--text);
+  margin: 0;
+}
+
+.stepCount {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.slotList {
+  display: flex;
+  flex-direction: column;
+}
+
+.slot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 10px;
+  margin: 0 -10px;
+  border: none;
+  border-top: 1px solid var(--border);
+  background: none;
+  font: inherit;
+  text-align: left;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.slot:not(:disabled):hover {
+  background: var(--alt);
+}
+
+.slot:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.slotCurrent {
+  background: var(--alt);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.abbr {
+  width: 52px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.abbrFilled {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.abbrEmpty {
+  background: var(--alt);
+  color: var(--muted);
+}
+
+.slotInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.slotCat {
+  font-family: var(--font-head);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.slotModel {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slotModelFilled {
+  color: var(--text);
+}
+
+.slotModelEmpty {
+  color: var(--muted);
+}
+
+.slotPrice {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.slotPriceFilled {
+  color: var(--text);
+}
+
+.slotPriceEmpty {
+  color: var(--muted);
+}
+
+.total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 2px solid var(--text);
+}
+
+.totalLabel {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.totalValue {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 26px;
+  color: var(--text);
+}
