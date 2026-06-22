@@ -6,7 +6,7 @@ import { ProductoModel } from '../models/producto.model';
 import { CarritoModel } from '../models/carrito.model';
 import { CarritoItemModel } from '../models/carrito-item.model';
 import { AuthRequest } from '../middleware/auth.middleware';
-
+import { UsuarioModel } from '../models/usuario.model';
 export class OrdenController {
   // Procesa la compra del usuario autenticado a partir de los productos que tiene en su carrito
   // Usa una transacción para asegurar que todos los cambios se realicen juntos o se reviertan si ocurre un error
@@ -170,6 +170,37 @@ export class OrdenController {
       res.status(200).json({ ordenes });
     } catch (error) {
       console.error('Error al obtener el historial de órdenes:', error);
+      res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+  }
+  // Obtiene TODAS las órdenes del sistema para el panel de administración
+  static async obtenerTodasLasOrdenesAdmin(req: AuthRequest, res: Response) {
+    try {
+      
+      const ordenes = await (OrdenModel as any).findAll({
+          include: [
+          {
+            model: UsuarioModel,
+            
+            attributes: ['id', 'nombre', 'apellido', 'correo'], 
+          },
+          {
+            model: OrderItemModel,
+            as: 'items', 
+            include: [
+              {
+                model: ProductoModel,
+                attributes: ['id', 'modelo', 'precio'],
+              },
+            ],
+          },
+        ],
+        order: [['createdAt', 'DESC']], 
+      });
+
+      res.status(200).json({ ordenes });
+    } catch (error) {
+      console.error('Error al obtener las órdenes para el admin:', error);
       res.status(500).json({ message: 'Error interno del servidor.' });
     }
   }
