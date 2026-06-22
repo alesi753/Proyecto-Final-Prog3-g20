@@ -1,0 +1,114 @@
+.history {
+  margin-top: 56px;
+}
+
+.heading {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 0 0 24px;
+}
+
+.group {
+  margin-bottom: 32px;
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.badge {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+/* State accents */
+.pendiente   { background: #fdf3d8; border-color: #e8d28a; }
+.pagado      { background: #dcefe1; border-color: #9fccb0; }
+.preparando  { background: #e3ecf7; border-color: #a6c2e0; }
+.enviado     { background: #e6e2f5; border-color: #b6abda; }
+.entregado   { background: #1A1813; border-color: #1A1813; color: #FCFBF8; }
+.cancelado   { background: #f6ddd9; border-color: #dca79e; }
+
+.count {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.order {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  padding: 16px 18px;
+  margin-bottom: 12px;
+}
+
+.orderHead {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.orderId {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.orderDate {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.orderTotal {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.itemName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemPrice {
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
