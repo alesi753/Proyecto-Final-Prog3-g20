@@ -37,6 +37,14 @@ export default function Navbar() {
             {label}
           </Link>
         ))}
+        {isAuthenticated && user?.rol === 'admin' && (
+          <Link
+            to="/admin/pedidos"
+            className={`${styles.link} ${pathname === '/admin/pedidos' ? styles.linkActive : ''}`}
+          >
+            Panel Admin
+          </Link>
+        )}
 
         {isAuthenticated ? (
           <div className={styles.authArea}>

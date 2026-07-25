@@ -8,6 +8,7 @@ import Builder from './pages/Builder';
 import Login from './pages/Login';
 import Carrito from './pages/Carrito';
 import Productos from './pages/Productos';
+import AdminDashboard from './pages/AdminDashboard';
 import './App.css';
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ function App() {
             <Route path="/login"   element={<Login />} />
             <Route path="/carrito" element={<Carrito />} />
             <Route path="/productos" element={<Productos />} />
+            <Route path="/admin/pedidos" element={<AdminDashboard />} />
           </Routes>
           <Toaster position="bottom-right" />
         </BrowserRouter>
