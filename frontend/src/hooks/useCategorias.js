@@ -31,3 +31,20 @@ export function getDescendantIds(categorias, ancestorName) {
 
   return [...ids];
 }
+
+// Devuelve la familia principal de una categoría hoja (por ejemplo, "Procesador").
+export function getFamilyName(categorias, categoriaId) {
+  if (!categorias) return '';
+
+  let category = categorias.find(c => c.id === categoriaId);
+  if (!category) return '';
+
+  while (category.padreId !== null) {
+    const parent = categorias.find(c => c.id === category.padreId);
+    if (!parent) break;
+    if (parent.padreId === null) break;
+    category = parent;
+  }
+
+  return category.nombre;
+}
