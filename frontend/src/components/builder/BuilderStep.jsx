@@ -29,7 +29,10 @@ export default function BuilderStep({ step, stepIndex, selectedParts, selected, 
   const chosen = isMulti ? (selected ?? []) : null;
   const capacity = isMulti ? step.multi.capacity(selectedParts) : 1;
   const full = isMulti && chosen.length >= capacity;
-  const canContinue = isMulti ? chosen.length > 0 : !!selected;
+  // El paso GPU es opcional si el CPU trae gráficos integrados.
+  const gpuOptional = step.slot === 'gpu' && !!selectedParts.cpu?.especificaciones?.grafica_integrada;
+  const gpuSkip = gpuOptional && !selected;
+  const canContinue = (isMulti ? chosen.length > 0 : !!selected) || gpuOptional;
 
   // Compatibility constraint derived from earlier selections (may be null).
   const compat = useMemo(
@@ -182,7 +185,7 @@ export default function BuilderStep({ step, stepIndex, selectedParts, selected, 
           onClick={() => canContinue && onContinue()}
           disabled={!canContinue}
         >
-          {canContinue ? 'Continuar →' : 'Elegí una opción'}
+          {gpuSkip ? 'Usar gráficos integrados →' : canContinue ? 'Continuar →' : 'Elegí una opción'}
         </button>
       </div>
     </section>
