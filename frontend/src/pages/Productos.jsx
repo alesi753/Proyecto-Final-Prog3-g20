@@ -159,6 +159,7 @@ export default function Productos() {
                 product={product}
                 name={partName(product, marcas)}
                 family={getFamilyName(categorias, product.categoriaId)}
+                brand={marcaName(marcas, product.marcaId)}
               />
             ))}
           </section>

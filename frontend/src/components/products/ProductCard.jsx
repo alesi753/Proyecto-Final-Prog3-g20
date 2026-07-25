@@ -3,14 +3,18 @@ import toast from 'react-hot-toast';
 import { ars } from '../../utils/format';
 import { productSpecs } from '../../utils/specLabels';
 import { addToStoredCart } from '../../utils/cart';
+import { getCategoryImage } from '../../utils/categoryImages';
+import { getBrandBadge } from '../../utils/brandBadge';
 import styles from './ProductCard.module.css';
 
 // Tarjeta de catálogo con cantidad local, stock y detalle de especificaciones.
-export default function ProductCard({ product, name, family }) {
+export default function ProductCard({ product, name, family, brand }) {
   const [quantity, setQuantity] = useState(1);
   const [showSpecs, setShowSpecs] = useState(false);
   const inStock = product.stock > 0;
   const specs = productSpecs(product.especificaciones, family);
+  const categoryImage = getCategoryImage(family);
+  const brandBadge = getBrandBadge(brand);
 
   function addToCart() {
     const cartQuantity = addToStoredCart(product.id, quantity, product.stock);
@@ -21,7 +25,20 @@ export default function ProductCard({ product, name, family }) {
   return (
     <article className={styles.card}>
       <div className={styles.visual}>
+        {categoryImage && (
+          <img
+            className={styles.image}
+            src={categoryImage.src}
+            alt={`Ilustración de ${family}`}
+          />
+        )}
+        <div className={styles.visualOverlay} />
         <span className={styles.family}>{family}</span>
+        <span className={styles.brandBadge} title={brand}>
+          {brandBadge.type === 'logo' ? (
+            <img src={brandBadge.src} alt={brand} />
+          ) : brandBadge.label}
+        </span>
         <span className={styles.productCode}>#{String(product.id).padStart(3, '0')}</span>
       </div>
 
