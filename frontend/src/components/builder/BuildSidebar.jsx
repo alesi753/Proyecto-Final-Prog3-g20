@@ -23,6 +23,10 @@ export default function BuildSidebar({ selectedParts, currentStep, onNavigate })
   const { data: marcas } = useMarcas();
   const total = Object.values(selectedParts).reduce((sum, v) => sum + slotPrice(v), 0);
 
+  // El slot GPU cuenta como resuelto si el CPU trae gráficos integrados.
+  const iGpu = !!selectedParts.cpu?.especificaciones?.grafica_integrada;
+  const slotSatisfied = (key, v) => isFilled(v) || (key === 'gpu' && iGpu);
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.header}>
@@ -35,9 +39,10 @@ export default function BuildSidebar({ selectedParts, currentStep, onNavigate })
           const value = selectedParts[key];
           const filled = isFilled(value);
           const isList = Array.isArray(value);
-          // Jumpable only when every earlier slot is filled — mirrors the
-          // wizard's "can't advance until you pick" rule.
-          const reachable = index === 0 || SLOTS.slice(0, index).every(s => isFilled(selectedParts[s.key]));
+          const integrated = key === 'gpu' && !filled && iGpu;
+          const shown = filled || integrated;
+          // Navegable solo si los slots previos están resueltos (integrados cuentan).
+          const reachable = index === 0 || SLOTS.slice(0, index).every(s => slotSatisfied(s.key, selectedParts[s.key]));
           const isCurrent = index === currentStep;
 
           let model = 'Pendiente';
@@ -45,6 +50,8 @@ export default function BuildSidebar({ selectedParts, currentStep, onNavigate })
             model = isList
               ? (value.length === 1 ? partName(value[0], marcas) : `${value.length} unidades`)
               : partName(value, marcas);
+          } else if (integrated) {
+            model = 'Gráficos integrados del CPU';
           }
 
           return (
@@ -55,17 +62,17 @@ export default function BuildSidebar({ selectedParts, currentStep, onNavigate })
               onClick={() => onNavigate?.(index)}
               className={`${styles.slot} ${isCurrent ? styles.slotCurrent : ''}`}
             >
-              <span className={`${styles.abbr} ${filled ? styles.abbrFilled : styles.abbrEmpty}`}>
+              <span className={`${styles.abbr} ${shown ? styles.abbrFilled : styles.abbrEmpty}`}>
                 {abbr}
               </span>
               <div className={styles.slotInfo}>
                 <span className={styles.slotCat}>{cat}</span>
-                <span className={`${styles.slotModel} ${filled ? styles.slotModelFilled : styles.slotModelEmpty}`}>
+                <span className={`${styles.slotModel} ${shown ? styles.slotModelFilled : styles.slotModelEmpty}`}>
                   {model}
                 </span>
               </div>
-              <span className={`${styles.slotPrice} ${filled ? styles.slotPriceFilled : styles.slotPriceEmpty}`}>
-                {filled ? ars(slotPrice(value)) : '—'}
+              <span className={`${styles.slotPrice} ${shown ? styles.slotPriceFilled : styles.slotPriceEmpty}`}>
+                {filled ? ars(slotPrice(value)) : integrated ? 'Incluido' : '—'}
               </span>
             </button>
           );
