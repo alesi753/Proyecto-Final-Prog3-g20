@@ -173,6 +173,18 @@ export class OrdenController {
       res.status(500).json({ message: 'Error interno del servidor.' });
     }
   }
+  // Devuelve todas las órdenes (Solo para Administradores)
+  static async obtenerTodasLasOrdenes(req: AuthRequest, res: Response) {
+    try {
+      const ordenes = await OrdenModel.findAllOrders();
+
+      res.status(200).json({ ordenes });
+    } catch (error) {
+      console.error('Error al obtener todas las órdenes:', error);
+      res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+  }
+
   // Actualiza el estado de una orden (Solo para Administradores)
   static async actualizarEstadoOrden(req: AuthRequest, res: Response) {
     try {

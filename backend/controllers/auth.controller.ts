@@ -22,6 +22,7 @@ export class AuthController {
         id: newUser.id,
         nombre: newUser.nombre,
         correo: newUser.correo,
+        rol: newUser.rol,
       };
 
       return res.status(201).json({
@@ -57,6 +58,7 @@ export class AuthController {
         id: user.id,
         nombre: user.nombre,
         correo: user.correo,
+        rol: user.rol, // lo usa el guard de admin en el front
       };
 
       return res.status(200).json({
