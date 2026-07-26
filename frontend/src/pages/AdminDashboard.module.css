@@ -56,9 +56,14 @@
   border-radius: 6px;
   border: 1px solid #d1d5db;
   background-color: #f9fafb;
+  color: #111;
   font-size: 0.9rem;
   cursor: pointer;
   transition: border-color 0.2s;
+}
+
+.select option {
+  color: #111;
 }
 
 .select:hover {
@@ -68,4 +73,103 @@
 .select:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.actionCell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.applyBtn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #111;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.applyBtn:hover:not(:disabled) {
+  background-color: #374151;
+}
+
+.applyBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.row {
+  cursor: pointer;
+}
+
+.row:hover {
+  background-color: #f9fafb;
+}
+
+.caret {
+  display: inline-block;
+  width: 1.1rem;
+  color: #6b7280;
+}
+
+.detailRow td {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+}
+
+.detail {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+}
+
+.detailTitle {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  margin: 0 0 0.5rem;
+}
+
+.detailClient {
+  color: #111;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+}
+
+.detailMuted {
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-weight: 400;
+  margin: 0;
+}
+
+.itemList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 640px) {
+  .detail {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }

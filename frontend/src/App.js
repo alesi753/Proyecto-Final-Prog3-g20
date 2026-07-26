@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Carrito from './pages/Carrito';
 import Productos from './pages/Productos';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminRoute from './components/AdminRoute';
 import './App.css';
 
 const queryClient = new QueryClient();
@@ -25,7 +26,7 @@ function App() {
             <Route path="/login"   element={<Login />} />
             <Route path="/carrito" element={<Carrito />} />
             <Route path="/productos" element={<Productos />} />
-            <Route path="/admin/pedidos" element={<AdminDashboard />} />
+            <Route path="/admin/pedidos" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           </Routes>
           <Toaster position="bottom-right" />
         </BrowserRouter>
