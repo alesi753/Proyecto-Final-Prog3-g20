@@ -173,4 +173,52 @@ export class OrdenController {
       res.status(500).json({ message: 'Error interno del servidor.' });
     }
   }
+  // Devuelve todas las órdenes (Solo para Administradores)
+  static async obtenerTodasLasOrdenes(req: AuthRequest, res: Response) {
+    try {
+      const ordenes = await OrdenModel.findAllOrders();
+
+      res.status(200).json({ ordenes });
+    } catch (error) {
+      console.error('Error al obtener todas las órdenes:', error);
+      res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+  }
+
+  // Actualiza el estado de una orden (Solo para Administradores)
+  static async actualizarEstadoOrden(req: AuthRequest, res: Response) {
+    try {
+      const { id } = req.params;
+      const { estado } = req.body;
+
+      // Validación con los estados 
+      const estadosPermitidos = [
+        'pendiente', 
+        'pagado', 
+        'preparando', 
+        'enviado', 
+        'entregado', 
+        'cancelado'
+      ];
+
+      if (!estadosPermitidos.includes(estado)) {
+        res.status(400).json({ message: 'Estado no válido.' });
+        return;
+      }
+      const ordenActualizada = await OrdenModel.updateOrder(Number(id), { estado });
+      
+      if (!ordenActualizada) {
+        res.status(404).json({ message: 'Orden no encontrada.' });
+        return;
+      }
+
+      res.status(200).json({
+        message: 'Estado de la orden actualizado con éxito.',
+        orden: ordenActualizada
+      });
+    } catch (error) {
+      console.error('Error al actualizar el estado de la orden:', error);
+      res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+  }
 }
