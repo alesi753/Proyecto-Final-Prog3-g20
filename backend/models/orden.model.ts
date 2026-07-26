@@ -1,6 +1,8 @@
 import { sequelize } from './index.model';
 import { DataTypes, Model, Optional } from 'sequelize';
 import { InterfaceOrden, EstadoOrden } from '../interfaces/orden.interfaces';
+import { UsuarioModel } from './usuario.model';
+import { ProductoModel } from './producto.model';
 
 // Omitimos 'id' y 'fechaCreacion', y el atributo 'estado' se vuelve opcional (podemos omitirlo al crear una orden, y se asumirá que es 'pendiente' por defecto)
 type InputOrder = Omit<InterfaceOrden, 'id' | 'estado' | 'fechaCreacion'> & {
@@ -22,8 +24,26 @@ export class OrdenModel
   declare estado: EstadoOrden;
   declare readonly fechaCreacion: Date;
 
+  // Todas las órdenes con su usuario (sin password) e items con producto, para el panel admin.
   static async findAllOrders(): Promise<OrdenModel[]> {
-    return await OrdenModel.findAll();
+    return await OrdenModel.findAll({
+      include: [
+        {
+          model: UsuarioModel,
+          attributes: ['id', 'nombre', 'apellido', 'correo'],
+        },
+        {
+          association: 'items',
+          include: [
+            {
+              model: ProductoModel,
+              attributes: ['id', 'modelo', 'precio'],
+            },
+          ],
+        },
+      ],
+      order: [['fechaCreacion', 'DESC']],
+    });
   }
 
   // Busca todas las órdenes que pertenecen a un usuario específico

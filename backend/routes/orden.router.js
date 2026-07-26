@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const { OrdenController } = require('../controllers/orden.controller');
 const { AuthMiddleware } = require('../middleware/auth.middleware');
+const { RoleMiddleware } = require('../middleware/role.middleware');
 
 const router = Router();
 
@@ -13,4 +14,10 @@ router.post('/checkout', OrdenController.procesarCheckout);
 // GET /api/ordenes/historial
 router.get('/historial', OrdenController.obtenerHistorialOrdenes);
 
+// GET /api/ordenes/admin
+router.get('/admin', RoleMiddleware.authorize('admin'), OrdenController.obtenerTodasLasOrdenes);
+
+// PUT /api/ordenes/admin/:id/estado
+router.put('/admin/:id/estado',RoleMiddleware.authorize('admin'),OrdenController.actualizarEstadoOrden
+);
 module.exports = router;
